@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FoodApp</string>
+    <string name="titleName">User Name:</string>
+    <string name="choice_your_nfavorite_coffee">Choice your\nFavorite Coffe</string>
+    <string name="the_best_gain_the_finest_roast_nthe_powerfull_flavor">The Best gain,the finest roast\nthe powerfull flavor</string>
+    <string name="get_started">Get Started</string>
+    <string name="search_anything">Search anything...</string>
+    <string name="category">Category</string>
+    <string name="popular_coffee">Popular_Coffee</string>
+    <string name="see_all">See all</string>
+</resources>
