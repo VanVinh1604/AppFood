@@ -13,6 +13,24 @@
         android:theme="@style/Theme.FoodApp"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.EditprofileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.SecurityActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.LanguageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.AccountInformationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.UserSignUpActivity"
             android:exported="false" />
         <activity
