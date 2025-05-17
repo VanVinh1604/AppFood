@@ -74,6 +74,7 @@ class MainRepository {
         return listData
     }
 
+
     fun loadItemCategory(categoryId:String):LiveData<MutableList<ItemsModel>>{
         val itemLiveData=MutableLiveData<MutableList<ItemsModel>>()
         val ref=firebaseDatabase.getReference("Popular")

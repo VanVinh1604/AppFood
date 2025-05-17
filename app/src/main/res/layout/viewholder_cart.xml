@@ -128,4 +128,4 @@
         app:layout_constraintTop_toTopOf="@+id/constraintLayout"
         android:layout_marginEnd="8dp"
         app:srcCompat="@drawable/close" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>

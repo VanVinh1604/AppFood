@@ -87,11 +87,12 @@ class ItemsListCategoryAdapter(val items:MutableList<ItemsModel>):RecyclerView.A
                 }
             }
         }
-        bindCommonData(
-            item.drinkName ?: "Unknown",
+           bindCommonData(
+           item.drinkName ?: "Unknown",
             "${item.drinkPrice} USD",
             item.rating?.toFloat() ?: 0f,
-            item.drinkImage?.getOrNull(0) ?: ""
-        )
+            item.drinkImage ?: ""
+           )
+
     }
 }

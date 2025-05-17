@@ -29,44 +29,50 @@ class CartAdapter (
     }
 
     override fun onBindViewHolder(holder: CartAdapter.ViewHolder, position: Int) {
-//        val item=listItemSelected[position]
-//
-//        holder.binding.titleTxt.text=item.title
-//        holder.binding.sizeTxt.text=item.size
-//        holder.binding.feeEachItem.text="$${item.price}"
-//        holder.binding.totalEachItem.text="$${Math.round(item.numberInCart*item.price)}"
-//        holder.binding.numberItemTxt.text=item.numberInCart.toString()
-//
-//        Glide.with(holder.itemView.context)
-//            .load(item.picUrl[0])
-//            .apply (RequestOptions().transform(CenterCrop()))
-//            .into(holder.binding.picCart)
-//
-//        holder.binding.plusEachItem.setOnClickListener{
-//            managmentCart.plusItem(listItemSelected,position,object :ChangeNumberItemsListener{
-//                override fun onChanged() {
-//                    notifyDataSetChanged()
-//                    changeNumberItemsListener?.onChanged()
-//                }
-//            })
+        val item=listItemSelected[position]
+
+
+        holder.binding.titleTxt.text=item.drinkName
+        holder.binding.sizeTxt.text=item.size
+        holder.binding.feeEachItem.text="$${item.drinkPrice}"
+        holder.binding.totalEachItem.text = "$${Math.round((item.numberInCart * (item.drinkPrice ?: 0.0)))}"
+        holder.binding.numberItemTxt.text=item.numberInCart.toString()
+
+        val imageUrl = item.drinkImage
+        Glide.with(holder.itemView.context)
+            .load(imageUrl)
+            .apply (RequestOptions().transform(CenterCrop()))
+            .into(holder.binding.picCart)
+
+        holder.binding.plusEachItem.setOnClickListener{
+            managmentCart.plusItem(listItemSelected,position,object :ChangeNumberItemsListener{
+                override fun onChanged() {
+                    notifyDataSetChanged()
+                    changeNumberItemsListener?.onChanged()
+                }
+            })
+        }
+        holder.binding.minusEachItem.setOnClickListener{
+            managmentCart.minusItem(listItemSelected,position,object :ChangeNumberItemsListener{
+                override fun onChanged() {
+                    notifyDataSetChanged()
+                    changeNumberItemsListener?.onChanged()
+                }
+            })
+        }
+
+//        holder.itemView.setOnClickListener {
+//           onItemClick?.invoke(item)
 //        }
-//        holder.binding.minusEachItem.setOnClickListener{
-//            managmentCart.minusItem(listItemSelected,position,object :ChangeNumberItemsListener{
-//                override fun onChanged() {
-//                    notifyDataSetChanged()
-//                    changeNumberItemsListener?.onChanged()
-//                }
-//            })
-//        }
-//
-//        holder.binding.removeItemBtn.setOnClickListener {
-//            managmentCart.romveItem(listItemSelected,position,object :ChangeNumberItemsListener{
-//                override fun onChanged() {
-//                    notifyDataSetChanged()
-//                    changeNumberItemsListener?.onChanged()
-//                }
-//            })
-//        }
+
+        holder.binding.removeItemBtn.setOnClickListener {
+            managmentCart.romveItem(listItemSelected,position,object :ChangeNumberItemsListener{
+                override fun onChanged() {
+                    notifyDataSetChanged()
+                    changeNumberItemsListener?.onChanged()
+                }
+            })
+        }
     }
 
     override fun getItemCount(): Int = listItemSelected.size
