@@ -1,6 +1,16 @@
 <resources>
+
     <string name="app_name">FoodApp</string>
+    <string name="default_web_client_id">281824876250-184irjnnsp8gjqmbvq4k362imhvsv4au.apps.googleusercontent.com</string>
+
     <string name="titleName">User Name:</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_cart">Cart</string>
+    <string name="nav_favorite">Favorite</string>
+    <string name="nav_order">Order</string>
+    <string name="nav_profile">Profile</string>
+
     <string name="choice_your_nfavorite_coffee">Choice your\nFavorite Coffe</string>
     <string name="the_best_gain_the_finest_roast_nthe_powerfull_flavor">The Best gain,the finest roast\nthe powerfull flavor</string>
     <string name="get_started">Get Started</string>

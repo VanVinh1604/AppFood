@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightCream"
+    tools:context=".Activity.OrdersActivity">
+
+    <!-- Nội dung chính -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:layout_marginBottom="70dp">
+
+        <!-- Nút quay lại -->
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Nút cài đặt -->
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/setting"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Tiêu đề tổng -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thông Báo"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#FF5722"
+            app:layout_constraintTop_toBottomOf="@id/backButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp" />
+
+        <!-- Tiêu đề phần đơn hàng -->
+        <TextView
+            android:id="@+id/orderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thông báo đơn hàng"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            app:layout_constraintTop_toBottomOf="@id/titleText"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="12dp" />
+
+        <!-- Wrapper chứa RecyclerView và Empty View -->
+        <FrameLayout
+            android:id="@+id/orderRecyclerWrapper"
+            android:layout_width="0dp"
+            android:layout_height="400dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/orderTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- RecyclerView đơn hàng -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/orderRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="ifContentScrolls" />
+
+            <!-- Layout khi không có đơn -->
+            <LinearLayout
+                android:id="@+id/emptyOrderView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:src="@drawable/bellicon"
+                    android:tint="#AAAAAA"
+                    android:contentDescription="Empty bell icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chưa có đơn hàng nào"
+                    android:textColor="#888888"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Tiêu đề phần ưu đãi -->
+        <TextView
+            android:id="@+id/promoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ưu đãi khuyến mãi"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            app:layout_constraintTop_toBottomOf="@id/orderRecyclerWrapper"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="12dp" />
+
+        <!-- RecyclerView ưu đãi -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/promoRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:overScrollMode="ifContentScrolls"
+            app:layout_constraintTop_toBottomOf="@id/promoTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Bottom Navigation -->
+    <include
+        android:id="@+id/bottomMenuInclude"
+        layout="@layout/bottom_menu"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_gravity="bottom" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -17,6 +17,10 @@ class UserViewModel: ViewModel() {
             callback(success)
         }
     }
+    fun signInWithGoogle(idToken: String, callback: (Boolean, String?) -> Unit) {
+        userRepo.signInWithGoogleCredential(idToken, callback)
+    }
+
 
     fun signUpCustomer(customer: CustomerModel, callback: (Boolean, String?) -> Unit) {
         userRepo.signUpCustomer(customer, callback)

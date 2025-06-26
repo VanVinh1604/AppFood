@@ -1,9 +1,12 @@
 package com.example.foodapp.Activity
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.SearchView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +20,7 @@ import com.example.foodapp.Domain.ItemsModel
 import com.example.foodapp.R
 import com.example.foodapp.ViewModel.MainViewModel
 import com.example.foodapp.databinding.ActivityMainBinding
+import com.example.foodapp.utils.dp
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,16 +31,13 @@ class MainActivity : AppCompatActivity() {
 //
 //    private var categoryList = listOf<CategoryModel>()  // Lưu data để search
     private var popularList = listOf<ItemsModel>()    // Lưu data để search
-//
-//
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        binding.searchView.isIconified = false
 
         initBanner()
         initCategory()
@@ -72,10 +73,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initBottomMenu() {
-        binding.cartBtn.setOnClickListener{
-            startActivity(Intent(this,CartActivity::class.java))
+        val rootView = findViewById<View>(R.id.bottomMenuInclude)
+
+        val homeIcon = rootView.findViewById<ImageView>(R.id.imageHome)
+        val homeText = rootView.findViewById<TextView>(R.id.textHome)
+
+        // Đặt màu vàng + phóng to khi ở Home
+        homeIcon.setColorFilter(getColor(R.color.orange)) // bạn cần thêm màu vào colors.xml
+        homeIcon.layoutParams.width = 28.dp  // bạn có thể tạo hàm chuyển đổi dp
+        homeIcon.layoutParams.height = 28.dp
+        homeIcon.requestLayout()
+
+        homeText.setTextColor(getColor(R.color.orange))
+        homeText.setTypeface(null, Typeface.BOLD)
+
+
+        val cartBtn = rootView.findViewById<View>(R.id.cartBtn)
+        cartBtn.setOnClickListener {
+            startActivity(Intent(this, CartActivity::class.java))
         }
+
+        // FAVORITE
+        val favoriteBtn = rootView.findViewById<View>(R.id.favoriteBtn)
+        favoriteBtn.setOnClickListener {
+   //         startActivity(Intent(this, FavoriteActivity::class.java))
+        }
+
+        // ORDER
+        val orderBtn = rootView.findViewById<View>(R.id.orderBtn)
+        orderBtn.setOnClickListener {
+            startActivity(Intent(this, OrdersActivity::class.java))
+        }
+
+        // PROFILE
+        val profileBtn = rootView.findViewById<View>(R.id.profileBtn)
+        profileBtn.setOnClickListener {
+   //         startActivity(Intent(this, ProfileActivity::class.java))
+        }
+
     }
+
+
     private fun initBanner() {
         binding.progressBarBanner.visibility = View.VISIBLE
         viewModel.loadBanner().observeForever {

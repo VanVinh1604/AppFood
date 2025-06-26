@@ -153,6 +153,18 @@ class ManagmentCart(val context: Context) {
         return "${drinkId}_${size}"
     }
 
+    fun clearCart() {
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        val ref = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
+        ref.removeValue()
+            .addOnSuccessListener {
+                Log.d("Cart", "Đã xóa giỏ hàng thành công")
+            }
+            .addOnFailureListener {
+                Log.e("Cart", "Không thể xóa giỏ hàng: ${it.message}")
+            }
+    }
+
     private fun removeItemInFirebase(cartId: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId == null) {
