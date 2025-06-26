@@ -75,6 +75,9 @@ class MainActivity : AppCompatActivity() {
         binding.cartBtn.setOnClickListener{
             startActivity(Intent(this,CartActivity::class.java))
         }
+        binding.profileBtn.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
     }
     private fun initBanner() {
         binding.progressBarBanner.visibility = View.VISIBLE
@@ -112,4 +115,5 @@ class MainActivity : AppCompatActivity() {
             binding.progressBarPopular.visibility = View.GONE
         }
     }
+
 }

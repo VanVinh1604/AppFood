@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightCream"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/logo_cafe"
+            android:layout_gravity="center"
+            android:contentDescription="Logo"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:id="@+id/aboutTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About Brew &amp; Bean"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Nội dung giới thiệu -->
+        <TextView
+            android:id="@+id/aboutContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Brew &amp; Bean is a specialty coffee mobile app designed for coffee lovers. We believe that every cup tells a story. From our carefully selected beans to our handcrafted brews, we bring the warmth of a café right to your doorstep.\n\nOur mission is to deliver quality drinks, support local farmers, and offer a delightful experience to every customer. Whether you’re craving an espresso, cold brew, or a seasonal latte – we’ve got you covered."
+            android:textSize="16sp"
+            android:lineSpacingExtra="6dp"
+            android:textColor="@color/darkBrown"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Chính sách -->
+        <TextView
+            android:id="@+id/policyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Privacy Policy • Terms of Use • Dispute Resolution"
+            android:textSize="14sp"
+            android:textColor="@color/gray"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Thông tin liên hệ -->
+        <TextView
+            android:id="@+id/contactText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contact us: support@brewandbean.com\nPhone: +84 123 456 789"
+            android:textSize="14sp"
+            android:textColor="@color/gray"
+            android:gravity="center"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+</ScrollView>
