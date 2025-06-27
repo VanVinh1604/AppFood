@@ -29,22 +29,22 @@ class UserLoginActivity : AppCompatActivity() {
             val email = binding.emailTxt.text.toString()
             val password = binding.passTxt.text.toString()
 
-            // Gọi phương thức login từ ViewModel hoặc Repository
+
             viewModel.loginUser(email, password) { success ->
                 if (success) {
-                    // Đăng nhập thành công, chuyển đến MainActivity
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
-                    finish() // Đóng màn hình đăng nhập
+                    finish()
+                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "Đăng nhập không thành công", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        // Đăng ký sự kiện cho nút sign up
+
         binding.signBtn.setOnClickListener {
-            // Chuyển đến màn hình đăng ký
+
             val intent = Intent(this, UserSignUpActivity::class.java)
             startActivity(intent)
         }

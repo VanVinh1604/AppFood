@@ -13,7 +13,7 @@ class CommentRepository {
 
     fun loadComment(drinkId: String): LiveData<MutableList<CommentModel>> {
         val commentLiveData = MutableLiveData<MutableList<CommentModel>>()
-        val ref = firebaseDatabase.getReference("Comments").orderByChild("drinkId").equalTo(drinkId)
+        val ref = firebaseDatabase.getReference("Comments").child(drinkId)
 
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -26,7 +26,7 @@ class CommentRepository {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Xử lý khi có lỗi
+                // Bạn có thể log hoặc gửi thông báo lỗi ở đây
             }
         })
 

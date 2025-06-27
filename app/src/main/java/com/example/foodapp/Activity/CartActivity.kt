@@ -56,14 +56,26 @@ class CartActivity : AppCompatActivity() {
             val cart = ManagmentCart(this@CartActivity)
             cart.getListCartInFirebase(object : CartItemsCallback {
                 override fun onCartItemsLoaded(items: ArrayList<ItemsModel>) {
-                    listView.adapter = CartAdapter(items, this@CartActivity)
+                    listView.adapter = CartAdapter(
+                        items,
+                        this@CartActivity,
+                        changeNumberItemsListener = object : ChangeNumberItemsListener {
+                            override fun onChanged() {
+                                calculateCart()
+                            }
+                        },
+//                        onItemClick = { item -> // 👈 Xử lý khi click vào item
+//                            // Log ra thông tin sản phẩm
+//                            println("Item clicked: ${item}")
+//                            // Hoặc log bằng Logcat
+//                            Log.d("CartItemClick", "Clicked: ${item.drinkName}")
+//                        }
+                    )
                 }
-
                 override fun onError(error: String) {
                     Toast.makeText(this@CartActivity, "Lỗi: $error", Toast.LENGTH_SHORT).show()
                 }
             })
-
         }
     }
 

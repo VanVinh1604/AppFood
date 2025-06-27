@@ -42,40 +42,43 @@ class MainActivity : AppCompatActivity() {
         initCategory()
         initPopular()
         initBottomMenu()
-   //     initSearch()
+        initSearch()
     }
-//    private fun initSearch() {
-//        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                query?.let {
-//                    filterItems(it)
-//                }
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                newText?.let {
-//                    filterItems(it)
-//                }
-//                return false
-//            }
-//        })
-//    }
+    private fun initSearch() {
+        binding.searchView.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    filterItems(it)
+                }
+                return false
+            }
 
-//    private fun filterItems(query: String) {
-//        val filteredPopular = popularList.filter {
-//            it.drinkName?.contains(query, ignoreCase = true) == true
-//        }
-//
-//        popularAdapter.updateData(filteredPopular)
-//    }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    filterItems(it)
+                }
+                return false
+            }
+        })
+    }
+
+    private fun filterItems(query: String) {
+        val filteredPopular = popularList.filter {
+            it.drinkName?.contains(query, ignoreCase = true) == true
+        }
+
+        popularAdapter.updateData(filteredPopular)
+    }
 
     private fun initBottomMenu() {
         binding.cartBtn.setOnClickListener{
             startActivity(Intent(this,CartActivity::class.java))
         }
+        binding.profileBtn.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
     }
-//
     private fun initBanner() {
         binding.progressBarBanner.visibility = View.VISIBLE
         viewModel.loadBanner().observeForever {
@@ -86,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         }
         viewModel.loadBanner()
     }
-//
+
     private fun initCategory() {
         binding.progressBarCategory.visibility = View.VISIBLE
         viewModel.loadCategory().observeForever {
@@ -112,4 +115,5 @@ class MainActivity : AppCompatActivity() {
             binding.progressBarPopular.visibility = View.GONE
         }
     }
+
 }

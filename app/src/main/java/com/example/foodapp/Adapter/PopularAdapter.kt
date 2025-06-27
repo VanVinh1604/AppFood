@@ -28,7 +28,7 @@ class PopularAdapter(val items:MutableList<ItemsModel>):RecyclerView.Adapter<Pop
         holder.binding.priceTxt.text="$" + items[position].drinkPrice.toString()
 
         Glide.with(context)
-            .load(items[position].drinkImage?.get(0))
+            .load(items[position].drinkImage ?: "")
             .into(holder.binding.pic)
 
         holder.itemView.setOnClickListener{
