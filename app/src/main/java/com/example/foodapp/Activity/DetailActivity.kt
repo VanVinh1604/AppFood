@@ -84,39 +84,27 @@ class DetailActivity : AppCompatActivity() {
             }
         }
     }
-    private fun bundle(){
+    private fun bundle() {
         binding.apply {
             item = intent.getSerializableExtra("object") as ItemsModel
 
-
             Glide.with(this@DetailActivity)
                 .load(item.drinkImage)
-                .into(binding.picMain)
+                .into(picMain)
 
             titleTxt.text = item.drinkName
             descriptionTxt.text = item.drinkDescription
-            priceTxt.text = "$" + item.drinkPrice
+            priceTxt.text = "$${item.drinkPrice}"
             ingredientTxt.text = item.drinkExtra
-//           ratingTxt.text = item.rating.toString()
             item.drinkId?.let { loadCurrentRating(it) }
 
-
-
-            binding.addToCartBtn.setOnClickListener {
-                val number = binding.numberItemTxt.text.toString().toIntOrNull() ?: 1
-
-                val itemToCart = item.copy(
-                    numberInCart = number,
-                    size = selectedSize
-                )
-
+            addToCartBtn.setOnClickListener {
+                val number = numberItemTxt.text.toString().toIntOrNull() ?: 1
+                val itemToCart = item.copy(numberInCart = number, size = selectedSize)
                 managmentCart.insertItemToCart(itemToCart)
             }
 
-
-            backBtn.setOnClickListener {
-                finish()
-            }
+            backBtn.setOnClickListener { finish() }
 
             plusCart.setOnClickListener {
                 numberItemTxt.text = (item.numberInCart + 1).toString()
@@ -131,6 +119,7 @@ class DetailActivity : AppCompatActivity() {
             }
         }
     }
+
 
 
     private fun setupFavoriteIcon() {
@@ -148,10 +137,8 @@ class DetailActivity : AppCompatActivity() {
             .child(userId)
             .child(drinkId)
 
-        // Bước 1: Kiểm tra xem sản phẩm đã được yêu thích chưa
         favoriteRef.get().addOnSuccessListener { snapshot ->
             isFavorite = snapshot.exists()
-
             val initialColor = if (isFavorite) R.color.darkBrown else android.R.color.darker_gray
             ImageViewCompat.setImageTintList(
                 binding.heartIcon,
@@ -159,7 +146,6 @@ class DetailActivity : AppCompatActivity() {
             )
         }
 
-        // Bước 2: Lắng nghe sự kiện click
         binding.heartIcon.setOnClickListener {
             isFavorite = !isFavorite
 
@@ -170,13 +156,19 @@ class DetailActivity : AppCompatActivity() {
             )
 
             if (isFavorite) {
-                // Thêm vào Favorites
+                val price = item.drinkPrice ?: 0.0
+                val description = item.drinkDescription ?: ""
+                val extra = item.drinkExtra ?: ""
+
                 val favoriteItem = hashMapOf<String, Any?>(
                     "drinkId" to item.drinkId,
                     "drinkName" to item.drinkName,
-                    "drinkPrice" to item.drinkPrice,
-                    "drinkImage" to item.drinkImage
+                    "drinkPrice" to price,
+                    "drinkImage" to item.drinkImage,
+                    "drinkDescription" to description,
+                    "drinkExtra" to extra
                 )
+
                 favoriteRef.setValue(favoriteItem)
                     .addOnSuccessListener {
                         Toast.makeText(this, "Đã thêm vào mục yêu thích", Toast.LENGTH_SHORT).show()
@@ -185,7 +177,6 @@ class DetailActivity : AppCompatActivity() {
                         Toast.makeText(this, "Lỗi: ${it.message}", Toast.LENGTH_SHORT).show()
                     }
             } else {
-                // Xoá khỏi Favorites
                 favoriteRef.removeValue()
                     .addOnSuccessListener {
                         Toast.makeText(this, "Đã bỏ khỏi mục yêu thích", Toast.LENGTH_SHORT).show()
@@ -196,9 +187,6 @@ class DetailActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
 
 
 

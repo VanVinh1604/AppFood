@@ -78,6 +78,9 @@ class MainActivity : AppCompatActivity() {
         binding.profileBtn.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
+        binding.favoritesBtn.setOnClickListener {
+            startActivity(Intent(this, FavoritesActivity::class.java))
+        }
     }
     private fun initBanner() {
         binding.progressBarBanner.visibility = View.VISIBLE

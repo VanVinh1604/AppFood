@@ -250,20 +250,22 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/favoritesBtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.2"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
 
             <ImageView
-
+                android:id="@+id/favoritesIcon"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/btn_3" />
 
             <TextView
-
+                android:id="@+id/favoritesText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
@@ -272,6 +274,7 @@
                 android:textColor="@color/white"
                 android:textSize="10sp" />
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="0dp"
