@@ -11,12 +11,14 @@ import com.example.foodapp.R
 import com.example.foodapp.ViewModel.MainViewModel
 import com.example.foodapp.databinding.ActivityPaymentBinding
 import com.example.project1762.Helper.ManagmentCart
+import com.example.project1762.Helper.PaypalHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 
 class PaymentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPaymentBinding
     private val paymentViewModel: MainViewModel by viewModels()
+    private var isPaypalApproved = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,9 +39,37 @@ class PaymentActivity : AppCompatActivity() {
         }
 
         binding.ocdBtn.setOnClickListener {
-            placeOrder()
+            val method = when (binding.paymentContainer.checkedRadioButtonId) {
+                R.id.radioCOD -> "COD"
+                R.id.radioMomo -> "Momo"
+                R.id.radioPaypal -> "PayPal"
+                else -> null
+            }
+
+            if (method == null) {
+                Toast.makeText(this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (method == "PayPal") {
+                val amount = intent.getStringExtra("totalPrice") ?: "0.00"
+                startPaypalPayment(amount)
+            } else {
+                placeOrder(method)
+            }
         }
+
     }
+    override fun onResume() {
+        super.onResume()
+        handlePaypalResult(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handlePaypalResult(intent)
+    }
+
     private fun observeUserInfo() {
         paymentViewModel.getUserInfo().observe(this) { user ->
             if (user != null) {
@@ -51,7 +81,7 @@ class PaymentActivity : AppCompatActivity() {
         }
     }
 
-    private fun placeOrder() {
+    private fun placeOrder(paymentMethod: String) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid == null) {
             Toast.makeText(this, "Bạn chưa đăng nhập", Toast.LENGTH_SHORT).show()
@@ -67,19 +97,6 @@ class PaymentActivity : AppCompatActivity() {
             return
         }
 
-        val paymentMethod = when (binding.paymentContainer.checkedRadioButtonId) {
-            R.id.radioCOD -> "COD"
-            R.id.radioMomo -> "Momo"
-            R.id.radioPaypal -> "PayPal"
-            else -> null
-        }
-
-        if (paymentMethod == null) {
-            Toast.makeText(this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Tạo đơn hàng
         val order = OrderDetails(
             customerId = uid,
             customerName = name,
@@ -98,10 +115,7 @@ class PaymentActivity : AppCompatActivity() {
 
         paymentViewModel.saveOrder(order) { success ->
             if (success) {
-                // ✅ Xoá giỏ hàng khi đặt hàng thành công
-                val cart = ManagmentCart(this)
-                cart.clearCart()
-
+                ManagmentCart(this).clearCart()
                 Toast.makeText(this, "Đặt hàng thành công!", Toast.LENGTH_SHORT).show()
 
                 val intent = Intent(this, OrderDetailsActivity::class.java)
@@ -113,5 +127,42 @@ class PaymentActivity : AppCompatActivity() {
             }
         }
     }
+
+    //Payment Paypal
+    private fun handlePaypalResult(intent: Intent?) {
+        val uri = intent?.data ?: return
+
+        if (uri.scheme == "myapp" && uri.host == "paypal") {
+            when (uri.path) {
+                "/success" -> {
+                    if (!isPaypalApproved) {
+                        isPaypalApproved = true
+                        Toast.makeText(this, "Thanh toán PayPal thành công", Toast.LENGTH_SHORT).show()
+                        placeOrder("PayPal")
+                    }
+                }
+
+                "/cancel" -> {
+                    Toast.makeText(this, "Bạn đã huỷ thanh toán PayPal", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
+    private fun startPaypalPayment(totalAmount: String) {
+        PaypalHelper.createOrder(this, totalAmount) { approvalUrl ->
+            if (approvalUrl != null) {
+                runOnUiThread {
+                    PaypalHelper.openPaypalCheckout(this, approvalUrl)
+                }
+            } else {
+                runOnUiThread {
+                    Toast.makeText(this, "Tạo đơn PayPal thất bại!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 
 }

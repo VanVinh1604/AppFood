@@ -16,7 +16,25 @@
         <!-- Activity từ nhánh main -->
         <activity android:name=".Activity.OrderDetailsActivity" android:exported="false" />
         <activity android:name=".Activity.OrdersActivity" android:exported="false" />
-        <activity android:name=".Activity.PaymentActivity" android:exported="false" />
+        <activity android:name=".Activity.PaymentActivity" android:exported="true" android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp"
+                    android:host="paypal"
+                    android:path="/success" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp"
+                    android:host="paypal"
+                    android:path="/cancel" />
+            </intent-filter>
+        </activity>
 
         <!-- Activity từ nhánh Cafe -->
         <activity android:name=".Activity.FavoritesActivity" android:exported="false" />
@@ -29,7 +47,8 @@
         <!-- Các Activity dùng chung -->
         <activity android:name=".Activity.UserSignUpActivity" android:exported="false" />
         <activity android:name=".Activity.UserLoginActivity" android:exported="false" />
-        <activity android:name=".Activity.CartActivity" android:exported="false" />
+        <activity android:name=".Activity.CartActivity" android:exported="false"/>
+
         <activity android:name=".Activity.ItemsListActivity" android:exported="false" />
         <activity android:name=".Activity.DetailActivity" android:exported="false" />
 
