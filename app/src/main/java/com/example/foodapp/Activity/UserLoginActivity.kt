@@ -65,6 +65,8 @@ class UserLoginActivity : AppCompatActivity() {
 //            .build()
 //        googleSignInClient= GoogleSignIn.getClient(this,gso)
 
+
+
         setContentView(binding.root)
 
         setupViewBinding()
@@ -72,9 +74,20 @@ class UserLoginActivity : AppCompatActivity() {
         setupLoginClick()
         setupSignUpClick()
         setupGoogleSignInClick()
-
+        checkLoginStatus()
 
     }
+    private fun checkLoginStatus() {
+        val sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+
+        if (isLoggedIn) {
+            // Đã đăng nhập, chuyển thẳng tới MainActivity
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+    }
+
 
     private fun setupViewBinding() {
         binding = ActivityUserLoginBinding.inflate(layoutInflater)
@@ -98,6 +111,7 @@ class UserLoginActivity : AppCompatActivity() {
 
             viewModel.loginUser(email, password) { success ->
                 if (success) {
+                    saveLoginState()
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
@@ -168,6 +182,7 @@ private fun setupGoogleSignInClick() {
 
                                     ref.child(user.uid).setValue(customer)
                                         .addOnSuccessListener {
+                                            saveLoginState()
                                             Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
                                             startActivity(Intent(this, MainActivity::class.java))
                                             finish()
@@ -186,71 +201,13 @@ private fun setupGoogleSignInClick() {
             }
         }
     }
+    private fun saveLoginState() {
+        val sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean("isLoggedIn", true)
+            apply()
+        }
+    }
 
-
-
-//    private fun signInWithGoogle()
-////    {
-////        val signInIntent = googleSignInClient.signInIntent
-////        launcher.launch(signInIntent)
-////    }
-
-//    private val launcher =
-//        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-//        { result ->
-//            if (result.resultCode == RESULT_OK){
-//            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-//            handleResults(task)
-//        }
-//    }
-//
-//    private fun handleResults(task: Task<GoogleSignInAccount>) {
-//        if (task.isSuccessful){
-//            val account:GoogleSignInAccount?= task.result
-//            if (account!=null){
-//                updateUI(account)
-//            }
-//        }
-//        else
-//        {
-//            showToast(this,"Sign In failed,Try again late")
-//        }
-//    }
-//
-//    private fun updateUI(account: GoogleSignInAccount) {
-//
-//        val credential = GoogleAuthProvider.getCredential(account.idToken,null)
-//        auth.signInWithCredential(credential).addOnCompleteListener {
-//            if (it.isSuccessful) {
-//                val user = auth.currentUser
-//                if (user != null) {
-//                    val database = FirebaseDatabase.getInstance()
-//                    val ref = database.getReference("GoogleUser")  // Node "GoogleUser"
-//
-//                    // Tạo đối tượng CustomerModel từ thông tin Google Account
-//                    val customer = CustomerModel(
-//                        nameCustomer = account.displayName,
-//                        emailCustomer = account.email,
-////                        profileImage = account.photoUrl?.toString(),
-//                        phoneNumberCustomer = user.phoneNumber,
-//                        addressCustomer = null
-//                    )
-//
-//                    // Ghi dữ liệu vào Realtime Database tại path: GoogleUser/{user.uid}
-//                    ref.child(user.uid).setValue(customer)
-//                        .addOnSuccessListener {
-//                            Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-//                            startActivity(Intent(this, MainActivity::class.java))
-//                            finish()
-//                        }
-//                        .addOnFailureListener { e ->
-//                            Toast.makeText(this, "Lỗi lưu thông tin: ${e.message}", Toast.LENGTH_SHORT).show()
-//                        }
-//                }
-//            } else {
-//                Toast.makeText(this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
 
 }

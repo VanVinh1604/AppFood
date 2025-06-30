@@ -75,6 +75,8 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         logoutButton.setOnClickListener {
+            val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
+            sharedPref.edit().remove("isLoggedIn").apply()
             auth.signOut()
             Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, UserLoginActivity::class.java)
