@@ -50,6 +50,7 @@
             android:layout_marginTop="8dp" />
 
         <!-- Tiêu đề phần đơn hàng -->
+
         <TextView
             android:id="@+id/orderTitle"
             android:layout_width="wrap_content"
@@ -62,13 +63,48 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="12dp" />
 
-        <!-- Wrapper chứa RecyclerView và Empty View -->
+        <!-- Bộ lọc nằm ngay sau tiêu đề đơn hàng -->
+        <LinearLayout
+            android:id="@+id/filterLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/orderTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/filterNew"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Đơn hàng mới"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:background="@drawable/filter_selector" />
+
+            <TextView
+                android:id="@+id/filterDelivered"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Đơn đã giao"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:background="@drawable/filter_selector" />
+        </LinearLayout>
+
+        <!-- RecyclerView nằm phía dưới bộ lọc -->
         <FrameLayout
             android:id="@+id/orderRecyclerWrapper"
             android:layout_width="0dp"
             android:layout_height="400dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/orderTitle"
+            app:layout_constraintTop_toBottomOf="@id/filterLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -105,7 +141,6 @@
                     android:layout_marginTop="8dp" />
             </LinearLayout>
         </FrameLayout>
-
         <!-- Tiêu đề phần ưu đãi -->
         <TextView
             android:id="@+id/promoTitle"

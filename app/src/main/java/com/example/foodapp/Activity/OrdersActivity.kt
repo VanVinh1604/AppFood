@@ -14,12 +14,14 @@ import com.example.foodapp.databinding.ActivityOrdersBinding
 import com.example.foodapp.utils.dp
 import android.graphics.Typeface
 import com.example.foodapp.Adapter.OrdersAdapter
+import com.example.foodapp.Domain.OrderDetails
 
 
 class OrdersActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOrdersBinding
     private val viewModel: MainViewModel by viewModels()
     private lateinit var adapter: OrdersAdapter
+    private var allOrders: List<OrderDetails> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,16 @@ class OrdersActivity : AppCompatActivity() {
         }
         setupBottomMenu()
         setupRecyclerView()
+
+        binding.filterNew.setOnClickListener {
+            showOrders("new")
+            updateFilterUI("new")
+        }
+
+        binding.filterDelivered.setOnClickListener {
+            showOrders("delivered")
+            updateFilterUI("delivered")
+        }
     }
 
     private fun setupRecyclerView() {
@@ -57,14 +69,41 @@ class OrdersActivity : AppCompatActivity() {
 
     private fun observeOrderList() {
         viewModel.getOrderHistory().observe(this) { orderList ->
-            if (orderList.isNullOrEmpty()) {
+            allOrders = orderList ?: emptyList()
+            if (allOrders.isEmpty()) {
                 binding.orderRecyclerView.visibility = View.GONE
                 binding.emptyOrderView.visibility = View.VISIBLE
             } else {
                 binding.emptyOrderView.visibility = View.GONE
                 binding.orderRecyclerView.visibility = View.VISIBLE
-                adapter.setOrders(orderList)
+                showOrders("new") // Mặc định hiển thị đơn hàng mới
+                updateFilterUI("new")
             }
+        }
+    }
+
+    private fun showOrders(filter: String) {
+        val filtered = when (filter) {
+            "delivered" -> allOrders.filter { it.deliveryStatus?.lowercase() == "delivered" }
+            "new" -> allOrders.filter { it.deliveryStatus?.lowercase() != "delivered" }
+            else -> allOrders
+        }
+        adapter.setOrders(filtered)
+    }
+
+    private fun updateFilterUI(active: String) {
+        if (active == "new") {
+            binding.filterNew.setBackgroundResource(R.drawable.dark_brown_bg)
+            binding.filterNew.setTextColor(getColor(R.color.white))
+
+            binding.filterDelivered.setBackgroundResource(R.drawable.white_bg)
+            binding.filterDelivered.setTextColor(getColor(R.color.darkBrown))
+        } else {
+            binding.filterDelivered.setBackgroundResource(R.drawable.dark_brown_bg)
+            binding.filterDelivered.setTextColor(getColor(R.color.white))
+
+            binding.filterNew.setBackgroundResource(R.drawable.white_bg)
+            binding.filterNew.setTextColor(getColor(R.color.darkBrown))
         }
     }
 

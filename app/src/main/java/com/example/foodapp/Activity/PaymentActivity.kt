@@ -43,36 +43,48 @@ class PaymentActivity : AppCompatActivity() {
     private fun observeUserInfo() {
         paymentViewModel.getUserInfo().observe(this) { user ->
             if (user != null) {
-                binding.nameInput.setText(user.nameCustomer)
-                binding.addressInput.setText(user.addressCustomer)
-                binding.phoneInput.setText(user.phoneNumberCustomer)
-            } else {
-                Toast.makeText(this, "Không thể tải thông tin người dùng", Toast.LENGTH_SHORT).show()
+                // Nếu người dùng đã có thông tin thì tự động điền
+                user.nameCustomer?.let { binding.nameInput.setText(it) }
+                user.addressCustomer?.let { binding.addressInput.setText(it) }
+                user.phoneNumberCustomer?.let { binding.phoneInput.setText(it) }
             }
         }
     }
+
     private fun placeOrder() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid == null) {
             Toast.makeText(this, "Bạn chưa đăng nhập", Toast.LENGTH_SHORT).show()
             return
         }
+
+        val name = binding.nameInput.text.toString().trim()
+        val address = binding.addressInput.text.toString().trim()
+        val phone = binding.phoneInput.text.toString().trim()
+
+        if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin cá nhân", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val paymentMethod = when (binding.paymentContainer.checkedRadioButtonId) {
             R.id.radioCOD -> "COD"
             R.id.radioMomo -> "Momo"
             R.id.radioPaypal -> "PayPal"
             else -> null
         }
+
         if (paymentMethod == null) {
             Toast.makeText(this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show()
             return
         }
 
+        // Tạo đơn hàng
         val order = OrderDetails(
             customerId = uid,
-            customerName = binding.nameInput.text.toString(),
-            address = binding.addressInput.text.toString(),
-            phoneNumber = binding.phoneInput.text.toString(),
+            customerName = name,
+            address = address,
+            phoneNumber = phone,
             note = binding.noteInput.text.toString(),
             totalPrice = intent.getStringExtra("totalPrice"),
             drinkNames = intent.getStringArrayListExtra("drinkNames"),
@@ -81,12 +93,12 @@ class PaymentActivity : AppCompatActivity() {
             drinkQuantities = intent.getIntegerArrayListExtra("drinkQuantities"),
             drinkSizes = intent.getStringArrayListExtra("drinkSizes"),
             paymentStatus = paymentMethod,
-            currentTime = System.currentTimeMillis()  // 🟢 Ghi thời điểm tạo đơn hàng
+            currentTime = System.currentTimeMillis()
         )
 
         paymentViewModel.saveOrder(order) { success ->
             if (success) {
-                // ✅ XÓA GIỎ HÀNG
+                // ✅ Xoá giỏ hàng khi đặt hàng thành công
                 val cart = ManagmentCart(this)
                 cart.clearCart()
 
@@ -101,4 +113,5 @@ class PaymentActivity : AppCompatActivity() {
             }
         }
     }
+
 }
