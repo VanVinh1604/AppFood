@@ -173,7 +173,7 @@ class CartActivity : AppCompatActivity() {
         // FAVORITE
         val favoriteBtn = rootView.findViewById<View>(R.id.favoriteBtn)
         favoriteBtn.setOnClickListener {
- //           startActivity(Intent(this, FavoriteActivity::class.java))
+            startActivity(Intent(this, FavoritesActivity::class.java))
             finish()
         }
 
@@ -187,7 +187,7 @@ class CartActivity : AppCompatActivity() {
         // PROFILE
         val profileBtn = rootView.findViewById<View>(R.id.profileBtn)
         profileBtn.setOnClickListener {
-    //        startActivity(Intent(this, ProfileActivity::class.java))
+            startActivity(Intent(this, ProfileActivity::class.java))
             finish()
         }
     }
