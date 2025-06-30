@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.core.state.helpers.Facade
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.foodapp.Adapter.CommentAdapter
+import com.example.foodapp.Adapter.RecommendationAdapter
 import com.example.foodapp.Domain.CommentModel
 import com.example.foodapp.Domain.ItemsModel
 import com.example.foodapp.R
@@ -33,7 +35,7 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var commentViewModel: MainViewModel
     private lateinit var commentAdapter: CommentAdapter
     private var isFavorite = false
-
+    private lateinit var recommendationAdapter: RecommendationAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,13 +50,64 @@ class DetailActivity : AppCompatActivity() {
         binding.recycleviewComment.layoutManager = LinearLayoutManager(this)
         binding.recycleviewComment.adapter = commentAdapter
 
+        recommendationAdapter = RecommendationAdapter(this, emptyList())
+        binding.recyclerViewRecommendation.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerViewRecommendation.adapter = recommendationAdapter
+
+// Gọi hàm để tải danh sách đề xuất
         bundle()
         initSizeList()
         setupFavoriteIcon()
         setupCommentSection()
         loadComments()
 
+// Đặt sau cùng, khi item đã có giá trị
+        if (::item.isInitialized && item.drinkId != null) {
+            loadRecommendations()
+        }
+
+
     }
+    private fun loadRecommendations() {
+        val drinkId = item.drinkId ?: return
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val database = FirebaseDatabase.getInstance().getReference("Cart")
+            .child(userId)
+            .child("listItem")
+
+        database.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val snapshot = task.result
+                val recommendationList = mutableListOf<ItemsModel>()
+
+                snapshot?.children?.forEach { itemSnapshot ->
+                    val item = itemSnapshot.getValue(ItemsModel::class.java)
+                    if (item != null) {
+                        item.drinkId = itemSnapshot.child("drinkId").getValue(String::class.java)
+
+                        if (item.drinkId != drinkId) {
+                            recommendationList.add(item)
+                        }
+                    }
+                }
+
+                recommendationAdapter.setData(recommendationList)
+
+                if (recommendationList.isEmpty()) {
+                    binding.recommendationTitle.visibility = View.GONE
+                    binding.recyclerViewRecommendation.visibility = View.GONE
+                } else {
+                    binding.recommendationTitle.visibility = View.VISIBLE
+                    binding.recyclerViewRecommendation.visibility = View.VISIBLE
+                }
+
+            } else {
+                Toast.makeText(this, "Lỗi load đề xuất: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     private fun initSizeList(){
         binding.apply {
@@ -86,16 +139,20 @@ class DetailActivity : AppCompatActivity() {
     }
     private fun bundle() {
         binding.apply {
-            item = intent.getSerializableExtra("object") as ItemsModel
-
+            item = intent.getSerializableExtra("object") as? ItemsModel ?: run {
+                Toast.makeText(this@DetailActivity, "Invalid item data at ${System.currentTimeMillis()}", Toast.LENGTH_SHORT).show()
+                println("Error: Intent data is null at ${System.currentTimeMillis()}")
+                return
+            }
+            println("Received item: drinkId=${item.drinkId}, name=${item.drinkName} at ${System.currentTimeMillis()}")
             Glide.with(this@DetailActivity)
                 .load(item.drinkImage)
                 .into(picMain)
 
-            titleTxt.text = item.drinkName
-            descriptionTxt.text = item.drinkDescription
-            priceTxt.text = "$${item.drinkPrice}"
-            ingredientTxt.text = item.drinkExtra
+            titleTxt.text = item.drinkName ?: "Tên không có"
+            descriptionTxt.text = item.drinkDescription ?: "Mô tả không có"
+            priceTxt.text = "$${item.drinkPrice ?: 0.0}"
+            ingredientTxt.text = item.drinkExtra ?: "Thông tin không có"
             item.drinkId?.let { loadCurrentRating(it) }
 
             addToCartBtn.setOnClickListener {
@@ -119,8 +176,6 @@ class DetailActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
     private fun setupFavoriteIcon() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
