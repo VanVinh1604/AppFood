@@ -51,7 +51,9 @@ class MainActivity : AppCompatActivity() {
         initPopular()
         initBottomMenu()
         initSearch()
+
 //        initFirebaseMessaging()
+
     }
     private fun initSearch() {
         binding.searchView.setOnQueryTextListener(object :
@@ -104,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         // FAVORITE
         val favoriteBtn = rootView.findViewById<View>(R.id.favoriteBtn)
         favoriteBtn.setOnClickListener {
-   //         startActivity(Intent(this, FavoriteActivity::class.java))
+            startActivity(Intent(this, FavoritesActivity::class.java))
         }
 
         // ORDER
@@ -116,10 +118,11 @@ class MainActivity : AppCompatActivity() {
         // PROFILE
         val profileBtn = rootView.findViewById<View>(R.id.profileBtn)
         profileBtn.setOnClickListener {
-   //         startActivity(Intent(this, ProfileActivity::class.java))
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
 
     }
+
 
 
     private fun initBanner() {
@@ -159,6 +162,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
 //    private fun initFirebaseMessaging() {
 //        // Tạo NotificationChannel cho Android 8+
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -186,5 +190,6 @@ class MainActivity : AppCompatActivity() {
 //            // TODO: Gửi token này lên server nếu muốn
 //        }
 //    }
+
 
 }

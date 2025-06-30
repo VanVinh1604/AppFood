@@ -95,6 +95,7 @@ class UserLoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+
             viewModel.loginUser(email, password) { success ->
                 if (success) {
                     val intent = Intent(this, MainActivity::class.java)
@@ -108,8 +109,10 @@ class UserLoginActivity : AppCompatActivity() {
         }
     }
 
+
     private fun setupSignUpClick() {
         binding.signBtn.setOnClickListener {
+
             val intent = Intent(this, UserSignUpActivity::class.java)
             startActivity(intent)
         }

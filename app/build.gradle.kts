@@ -1,14 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-
     id("com.google.gms.google-services")
+
 }
+
 
 android {
     signingConfigs {
         create("my_config") {
+
             storeFile = file("F:\\Android\\test_keystore.jks")
+
             storePassword = "16042004"
             keyAlias = "buivanvinh"
             keyPassword = "16042004"
@@ -58,6 +61,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
 
 
     testImplementation(libs.junit)

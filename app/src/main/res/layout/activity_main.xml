@@ -193,5 +193,6 @@
             android:id="@+id/bottomMenuInclude"
             layout="@layout/bottom_menu" />
 
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

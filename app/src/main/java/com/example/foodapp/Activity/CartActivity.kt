@@ -60,6 +60,7 @@ class CartActivity : AppCompatActivity() {
                         this@CartActivity,
                         changeNumberItemsListener = object : ChangeNumberItemsListener {
                             override fun onChanged() {
+
                                 // Cập nhật lại tổng tiền khi có thay đổi
                                 calculateCartFromList(items)
                             }
@@ -68,8 +69,8 @@ class CartActivity : AppCompatActivity() {
 
                     // Gọi tính tổng ngay sau khi load từ Firebase
                     calculateCartFromList(items)
-                }
 
+                }
                 override fun onError(error: String) {
                     Toast.makeText(this@CartActivity, "Lỗi: $error", Toast.LENGTH_SHORT).show()
                 }

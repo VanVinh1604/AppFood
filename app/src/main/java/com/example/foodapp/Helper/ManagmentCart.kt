@@ -153,6 +153,7 @@ class ManagmentCart(val context: Context) {
         return "${drinkId}_${size}"
     }
 
+
     fun clearCart() {
         val userId = firebaseAuth.currentUser?.uid ?: return
         val ref = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
@@ -174,6 +175,7 @@ class ManagmentCart(val context: Context) {
 
         val ref = FirebaseDatabase.getInstance().getReference("Cart").child(userId).child(cartId)
         ref.removeValue()
+
         Log.d("Remove Item in firebase", cartId)
     }
 }

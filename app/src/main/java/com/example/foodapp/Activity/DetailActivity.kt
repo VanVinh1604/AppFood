@@ -1,13 +1,16 @@
 package com.example.foodapp.Activity
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -29,6 +32,8 @@ class DetailActivity : AppCompatActivity() {
     private var selectedSize: String = "Small"
     private lateinit var commentViewModel: MainViewModel
     private lateinit var commentAdapter: CommentAdapter
+    private var isFavorite = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +50,7 @@ class DetailActivity : AppCompatActivity() {
 
         bundle()
         initSizeList()
-
+        setupFavoriteIcon()
         setupCommentSection()
         loadComments()
 
@@ -113,6 +118,7 @@ class DetailActivity : AppCompatActivity() {
                 finish()
             }
 
+
             plusCart.setOnClickListener {
                 numberItemTxt.text = (item.numberInCart + 1).toString()
                 item.numberInCart++
@@ -126,6 +132,75 @@ class DetailActivity : AppCompatActivity() {
             }
         }
     }
+
+
+
+    private fun setupFavoriteIcon() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val drinkId = item.drinkId ?: return
+
+        if (userId == null) {
+            binding.heartIcon.setOnClickListener {
+                Toast.makeText(this, "Vui lòng đăng nhập để sử dụng chức năng yêu thích", Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+
+        val favoriteRef = FirebaseDatabase.getInstance().getReference("Favorites")
+            .child(userId)
+            .child(drinkId)
+
+        favoriteRef.get().addOnSuccessListener { snapshot ->
+            isFavorite = snapshot.exists()
+            val initialColor = if (isFavorite) R.color.darkBrown else android.R.color.darker_gray
+            ImageViewCompat.setImageTintList(
+                binding.heartIcon,
+                ColorStateList.valueOf(ContextCompat.getColor(this, initialColor))
+            )
+        }
+
+        binding.heartIcon.setOnClickListener {
+            isFavorite = !isFavorite
+
+            val color = if (isFavorite) R.color.darkBrown else android.R.color.darker_gray
+            ImageViewCompat.setImageTintList(
+                binding.heartIcon,
+                ColorStateList.valueOf(ContextCompat.getColor(this, color))
+            )
+
+            if (isFavorite) {
+                val price = item.drinkPrice ?: 0.0
+                val description = item.drinkDescription ?: ""
+                val extra = item.drinkExtra ?: ""
+
+                val favoriteItem = hashMapOf<String, Any?>(
+                    "drinkId" to item.drinkId,
+                    "drinkName" to item.drinkName,
+                    "drinkPrice" to price,
+                    "drinkImage" to item.drinkImage,
+                    "drinkDescription" to description,
+                    "drinkExtra" to extra
+                )
+
+                favoriteRef.setValue(favoriteItem)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Đã thêm vào mục yêu thích", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Lỗi: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                favoriteRef.removeValue()
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Đã bỏ khỏi mục yêu thích", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Lỗi: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }
+    }
+
     private fun setupCommentSection() {
         binding.commentBtn.setOnClickListener {
             val commentText = binding.commentTxt.text.toString().trim()
@@ -141,7 +216,6 @@ class DetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter review content", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             val commentRef = FirebaseDatabase.getInstance().getReference("Comments")
                 .child(item.drinkId!!)
                 .child(userId)
