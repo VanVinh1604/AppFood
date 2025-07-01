@@ -1,12 +1,15 @@
 package com.example.foodapp.Domain
 
+import java.io.Serializable
+
 data class OrderDetails(
     var customerId: String? = null,
     var customerName: String? = null,
     var drinkNames: MutableList<String>? = null,
-    var drinkImage: MutableList<String>? = null,
+    var drinkImages: List<String>? = null,
     var drinkPrices: MutableList<String>? = null,
     var drinkQuantities: MutableList<Int>? = null,
+    var drinkSizes: MutableList<String>? = null,
     var address: String? = null,
     var totalPrice: String? = null,
     var note: String? = null,
@@ -17,5 +20,4 @@ data class OrderDetails(
     var deliveryStatus: String? = null,
     var itemPushKey: String? = null,
     var currentTime: Long = 0
-
-)
+): Serializable

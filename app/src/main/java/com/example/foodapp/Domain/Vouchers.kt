@@ -1,10 +1,13 @@
 package com.example.foodapp.Domain
 
-data class Vouchers(
+data class VouchersModel(
+    val voucherId: String? = null,
     val code: String? = null,
-    val value: String? = null,
-    val valid_from: Long? = null,
-    val created_at: Long? = null,
-    val status: String? = null,
-    val customerId: String
+    val description: String? = null,
+    val discountPercent: Double = 0.0,
+    val maxDiscount: Double = 0.0,
+    val minOrderValue: Double = 0.0,
+    val expiresAt: String? = null,
+    val usageLimit: Int = 0,
+    val active: Boolean = false
 )

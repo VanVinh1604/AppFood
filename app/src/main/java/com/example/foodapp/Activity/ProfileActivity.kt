@@ -14,51 +14,69 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var databaseRef: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var profileName: TextView
+    private lateinit var profileUsername: TextView
+    private lateinit var profileImage: ImageView
+    private lateinit var backButton: ImageView
+    private lateinit var logoutButton: Button
+    private lateinit var changeInfo: LinearLayout
+    private lateinit var orderNotification: LinearLayout
+    private lateinit var languageChange: LinearLayout
+    private lateinit var aboutApp: LinearLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        // Gán view
-        val profileName = findViewById<TextView>(R.id.profile_name)
-        val profileUsername = findViewById<TextView>(R.id.profile_username)
-        val profileImage = findViewById<ImageView>(R.id.profile_image)
-        val backButton = findViewById<ImageView>(R.id.back_button)
-        val logoutButton = findViewById<Button>(R.id.logout_button)
+        initViews()
+        setupProfileInfo()
+        setupClickEvents()
+        setupBottomMenu()
+    }
 
-        val changeInfo = findViewById<LinearLayout>(R.id.change_info)
-        val orderNotification = findViewById<LinearLayout>(R.id.order_notification)
-        val languageChange = findViewById<LinearLayout>(R.id.language_change)
-        val aboutApp = findViewById<LinearLayout>(R.id.about_app)
+    private fun initViews() {
+        profileName = findViewById(R.id.profile_name)
+        profileUsername = findViewById(R.id.profile_username)
+        profileImage = findViewById(R.id.profile_image)
+        backButton = findViewById(R.id.back_button)
+        logoutButton = findViewById(R.id.logout_button)
 
-        // Firebase
+        changeInfo = findViewById(R.id.change_info)
+        orderNotification = findViewById(R.id.order_notification)
+        languageChange = findViewById(R.id.language_change)
+        aboutApp = findViewById(R.id.about_app)
+
         auth = FirebaseAuth.getInstance()
-        val userId = auth.currentUser?.uid
+    }
 
-        if (userId != null) {
-            databaseRef = FirebaseDatabase.getInstance().getReference("Customers").child(userId)
+    private fun setupProfileInfo() {
+        val userId = auth.currentUser?.uid ?: return
 
-            databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val name = snapshot.child("nameCustomer").getValue(String::class.java)
-                    val email = snapshot.child("emailCustomer").getValue(String::class.java)
+        databaseRef = FirebaseDatabase.getInstance().getReference("Customers").child(userId)
 
-                    profileName.text = name ?: "No name"
-                    profileUsername.text = email ?: ""
-                }
+        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val name = snapshot.child("nameCustomer").getValue(String::class.java)
+                val email = snapshot.child("emailCustomer").getValue(String::class.java)
 
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@ProfileActivity, "Error loading profile", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
+                profileName.text = name ?: "No name"
+                profileUsername.text = email ?: ""
+            }
 
-        // Nút quay lại
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@ProfileActivity, "Error loading profile", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun setupClickEvents() {
         backButton.setOnClickListener {
             finish()
         }
 
-        // Đăng xuất
         logoutButton.setOnClickListener {
+            val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
+            sharedPref.edit().remove("isLoggedIn").apply()
             auth.signOut()
             Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, UserLoginActivity::class.java)
@@ -67,27 +85,52 @@ class ProfileActivity : AppCompatActivity() {
             finish()
         }
 
-        // Chuyển sang Edit Profile
         changeInfo.setOnClickListener {
-            val intent = Intent(this, EditProfileActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, EditProfileActivity::class.java))
         }
 
-        // 🔔 Chuyển sang NotificationActivity
         orderNotification.setOnClickListener {
-            val intent = Intent(this, NotificationActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, NotificationActivity::class.java))
         }
 
-        // 🌐 Chưa làm
         languageChange.setOnClickListener {
             Toast.makeText(this, "Language Settings clicked", Toast.LENGTH_SHORT).show()
         }
 
-        // ℹ️ Chuyển sang AboutActivity
         aboutApp.setOnClickListener {
-            val intent = Intent(this, AboutActivity::class.java)
+            startActivity(Intent(this, AboutActivity::class.java))
+        }
+    }
+
+    private fun setupBottomMenu() {
+        val rootView = findViewById<View>(R.id.bottomMenuInclude)
+
+        val profileIcon = rootView.findViewById<ImageView>(R.id.imageprofile)
+        val profileText = rootView.findViewById<TextView>(R.id.textprofile)
+        profileIcon.setColorFilter(getColor(R.color.orange))
+        profileText.setTextColor(getColor(R.color.orange))
+        profileText.setTypeface(null, android.graphics.Typeface.BOLD)
+
+        rootView.findViewById<View>(R.id.HomeBtn).setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
+            finish()
+        }
+
+        rootView.findViewById<View>(R.id.cartBtn).setOnClickListener {
+            startActivity(Intent(this, CartActivity::class.java))
+            finish()
+        }
+
+        rootView.findViewById<View>(R.id.favoriteBtn).setOnClickListener {
+            startActivity(Intent(this, FavoritesActivity::class.java))
+            finish()
+        }
+
+        rootView.findViewById<View>(R.id.orderBtn).setOnClickListener {
+            startActivity(Intent(this, OrdersActivity::class.java))
+            finish()
         }
     }
 }

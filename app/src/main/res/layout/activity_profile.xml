@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/main"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightCream"
-    tools:context=".ProfileActivity">
+    tools:context=".Activity.ProfileActivity">
 
+    <!-- Scrollable content -->
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/scrollViewProfile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomMenuInclude"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp">>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,7 +108,7 @@
                 android:orientation="vertical"
                 android:layout_marginTop="32dp">
 
-                <!-- 1. Edit personal info -->
+                <!-- Edit personal info -->
                 <LinearLayout
                     android:id="@+id/change_info"
                     android:layout_width="match_parent"
@@ -125,7 +134,7 @@
                         android:contentDescription="Go" />
                 </LinearLayout>
 
-                <!-- 2. Order notifications -->
+                <!-- Order notifications -->
                 <LinearLayout
                     android:id="@+id/order_notification"
                     android:layout_width="match_parent"
@@ -140,7 +149,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Notifications"
+                        android:text="Order Notifications"
                         android:textSize="16sp"
                         android:textColor="@color/black" />
 
@@ -151,7 +160,7 @@
                         android:contentDescription="Go" />
                 </LinearLayout>
 
-                <!-- 3. Change language -->
+                <!-- Change language -->
                 <LinearLayout
                     android:id="@+id/language_change"
                     android:layout_width="match_parent"
@@ -177,7 +186,7 @@
                         android:contentDescription="Go" />
                 </LinearLayout>
 
-                <!-- 4. About App -->
+                <!-- About App -->
                 <LinearLayout
                     android:id="@+id/about_app"
                     android:layout_width="match_parent"
@@ -214,8 +223,20 @@
                 android:textColor="@android:color/white"
                 android:backgroundTint="@color/darkBrown"
                 android:layout_marginTop="24dp"
+                android:layout_marginBottom="80dp"
                 android:minHeight="48dp"
                 android:padding="12dp" />
         </LinearLayout>
     </ScrollView>
+
+    <!-- Bottom navigation menu -->
+    <include
+        android:id="@+id/bottomMenuInclude"
+        layout="@layout/bottom_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,14 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-
     id("com.google.gms.google-services")
+
 }
+
 
 android {
     signingConfigs {
         create("my_config") {
+
             storeFile = file("D:\\test_keystore\\test_keystore.jks")
+
             storePassword = "16042004"
             keyAlias = "buivanvinh"
             keyPassword = "16042004"
@@ -62,6 +65,9 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.activity:activity:1.10.1")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("androidx.constraintlayout:constraintlayout-core:1.1.1")
+
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -75,6 +81,13 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
+
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+
+    // Identity Services cho One Tap - CẬP NHẬT
+    implementation("androidx.credentials:credentials:1.5.0-beta01")
+    implementation("androidx.credentials:credentials-play-services-auth:1.5.0-beta01")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     implementation(libs.firebase.storage)
     implementation(libs.firebase.messaging)

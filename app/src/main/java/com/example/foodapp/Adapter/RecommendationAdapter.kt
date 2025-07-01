@@ -1,0 +1,60 @@
+package com.example.foodapp.Adapter
+
+import android.content.Context
+import android.content.Intent
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.foodapp.Activity.DetailActivity
+import com.example.foodapp.Domain.ItemsModel
+import com.example.foodapp.R
+import com.example.foodapp.databinding.ItemRecommendationBinding
+
+class RecommendationAdapter(
+    private val context: Context,
+    private var recommendationList: List<ItemsModel>
+) : RecyclerView.Adapter<RecommendationAdapter.ViewHolder>() {
+
+    // ViewHolder sử dụng ViewBinding
+    inner class ViewHolder(val binding: ItemRecommendationBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemRecommendationBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = recommendationList[position]
+        with(holder.binding) {
+            // Hiển thị tên và giá sản phẩm
+            //recommendationName.text = item.drinkName?.trim() ?: "Không có tên"
+            recommendationPrice.text = "$${item.drinkPrice ?: 0}"
+
+            // Load ảnh sản phẩm bằng Glide
+            Glide.with(context)
+                .load(item.drinkImage?.takeIf { it.isNotEmpty() } ?: R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .into(recommendationImage)
+
+            // Sự kiện click vào item để mở DetailActivity
+            root.setOnClickListener {
+                val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("object", item)
+                context.startActivity(intent)
+            }
+        }
+    }
+
+    override fun getItemCount(): Int = recommendationList.size
+
+    // Hàm cập nhật dữ liệu từ Firebase
+    fun setData(newList: List<ItemsModel>) {
+        recommendationList = newList
+        notifyDataSetChanged()
+    }
+}
