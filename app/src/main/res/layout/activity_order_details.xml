@@ -25,7 +25,7 @@
             android:id="@+id/textHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Delicious cakes every day"
+            android:text="Always serving customers every day"
             android:textColor="#E86F3F"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -36,13 +36,12 @@
             android:id="@+id/textOrderId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mã đơn hàng:"
+            android:text="Order Id:"
             android:textSize="16sp"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginTop="12dp" />
 
-        <!-- Step Progress -->
         <!-- Step Progress -->
         <LinearLayout
             android:id="@+id/stepLayout"
@@ -51,13 +50,13 @@
             android:layout_marginTop="16dp"
             android:orientation="horizontal"
             android:gravity="center"
-            android:weightSum="7">
+            android:weightSum="7.5">
 
-            <!-- Step 1 -->
+            <!-- STEP 1 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:orientation="vertical"
                 android:gravity="center">
 
@@ -69,22 +68,25 @@
                     android:text="1"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/step1Text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="72dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="36dp"
                     android:text="Unconfirmed"
                     android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:maxWidth="70dp"
                     android:gravity="center"
                     android:textAlignment="center"
-                    android:ellipsize="end" />
+                    android:includeFontPadding="false"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:layout_marginTop="4dp" />
             </LinearLayout>
 
-            <!-- Line -->
+            <!-- LINE -->
             <View
                 android:layout_width="0dp"
                 android:layout_height="2dp"
@@ -92,11 +94,11 @@
                 android:background="#BDBDBD"
                 android:layout_gravity="center_vertical" />
 
-            <!-- Step 2 -->
+            <!-- STEP 2 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:orientation="vertical"
                 android:gravity="center">
 
@@ -108,22 +110,25 @@
                     android:text="2"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/step2Text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="72dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="36dp"
                     android:text="In Progress"
                     android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:maxWidth="70dp"
                     android:gravity="center"
                     android:textAlignment="center"
-                    android:ellipsize="end" />
+                    android:includeFontPadding="false"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:layout_marginTop="4dp" />
             </LinearLayout>
 
-            <!-- Line -->
+            <!-- LINE -->
             <View
                 android:layout_width="0dp"
                 android:layout_height="2dp"
@@ -131,11 +136,11 @@
                 android:background="#BDBDBD"
                 android:layout_gravity="center_vertical" />
 
-            <!-- Step 3 -->
+            <!-- STEP 3 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:orientation="vertical"
                 android:gravity="center">
 
@@ -147,22 +152,25 @@
                     android:text="3"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/step3Text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="72dp"
                     android:layout_height="wrap_content"
-                    android:text="Shipping a"
+                    android:minHeight="36dp"
+                    android:text="Shipping"
                     android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:maxWidth="70dp"
                     android:gravity="center"
                     android:textAlignment="center"
-                    android:ellipsize="end" />
+                    android:includeFontPadding="false"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:layout_marginTop="4dp" />
             </LinearLayout>
 
-            <!-- Line -->
+            <!-- LINE -->
             <View
                 android:layout_width="0dp"
                 android:layout_height="2dp"
@@ -170,11 +178,11 @@
                 android:background="#BDBDBD"
                 android:layout_gravity="center_vertical" />
 
-            <!-- Step 4 -->
+            <!-- STEP 4 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:orientation="vertical"
                 android:gravity="center">
 
@@ -186,21 +194,26 @@
                     android:text="4"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/step4Text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="72dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="36dp"
                     android:text="Delivered"
                     android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:maxWidth="70dp"
                     android:gravity="center"
                     android:textAlignment="center"
-                    android:ellipsize="end" />
+                    android:includeFontPadding="false"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:layout_marginTop="4dp" />
             </LinearLayout>
+
         </LinearLayout>
+
 
         <!-- Địa chỉ -->
         <TextView
@@ -216,7 +229,9 @@
             android:id="@+id/textCustomerInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Khách hàng:"
+            android:text="Customer:"
+            android:textColor="@color/darkBrown"
+            android:textStyle="bold"
             android:layout_marginTop="4dp" />
 
         <!-- Số điện thoại -->
@@ -224,7 +239,9 @@
             android:id="@+id/textPhone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Số điện thoại:"
+            android:text="PhoneNumber:"
+            android:textColor="@color/darkBrown"
+            android:textStyle="bold"
             android:layout_marginTop="4dp" />
 
         <!-- Địa chỉ chi tiết -->
@@ -232,7 +249,9 @@
             android:id="@+id/textAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Địa chỉ:"
+            android:text="Address:"
+            android:textColor="@color/darkBrown"
+            android:textStyle="bold"
             android:layout_marginTop="4dp" />
 
         <!-- Thanh toán -->
@@ -240,7 +259,9 @@
             android:id="@+id/textPaymentStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thanh toán:"
+            android:text="Payment method:"
+            android:textColor="@color/darkBrown"
+            android:textStyle="bold"
             android:layout_marginTop="4dp" />
 
         <!-- Giao hàng -->
@@ -248,7 +269,9 @@
             android:id="@+id/textDeliveryStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tình trạng:"
+            android:text="Status:"
+            android:textColor="@color/darkBrown"
+            android:textStyle="bold"
             android:layout_marginTop="4dp" />
 
         <!-- Ghi chú -->
@@ -256,7 +279,9 @@
             android:id="@+id/textNote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ghi chú:"
+            android:text="Note:"
+            android:textColor="@color/darkBrown"
+            android:textStyle="bold"
             android:layout_marginTop="4dp" />
 
         <!-- Thời gian -->
@@ -264,7 +289,9 @@
             android:id="@+id/textOrderTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ngày đặt:"
+            android:text="Order date:"
+            android:textColor="@color/darkBrown"
+            android:textStyle="bold"
             android:layout_marginTop="4dp" />
 
         <!-- Danh sách sản phẩm -->

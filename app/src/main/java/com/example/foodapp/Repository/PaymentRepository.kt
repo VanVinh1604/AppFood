@@ -44,6 +44,29 @@ class PaymentRepository {
         return userLiveData
     }
 
+    fun decreaseVoucherUsage(code: String) {
+        val ref = FirebaseDatabase.getInstance()
+            .getReference("Vouchers")
+            .orderByChild("code")
+            .equalTo(code)
+
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (voucherSnap in snapshot.children) {
+                    val current = voucherSnap.child("usageLimit").getValue(Int::class.java) ?: 0
+                    if (current > 0) {
+                        voucherSnap.ref.child("usageLimit").setValue(current - 1)
+                    } else {
+                        voucherSnap.ref.child("active").setValue(false)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+
     fun saveOrder(order: OrderDetails, onResult: (Boolean) -> Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {

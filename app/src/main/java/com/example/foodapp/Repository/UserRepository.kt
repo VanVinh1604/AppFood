@@ -25,7 +25,7 @@ class UserRepository {
         val password = customer.passwordCustomer
 
         if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
-            callback(false, "Email hoặc mật khẩu không được để trống")
+            callback(false, "Email or password cannot be blank")
             return
         }
 
@@ -37,19 +37,19 @@ class UserRepository {
                         val dbRef = FirebaseDatabase.getInstance().getReference("Customers").child(uid)
                         dbRef.setValue(customer)
                             .addOnSuccessListener {
-                                Log.d("SignUp", "Ghi dữ liệu thành công")
+                                Log.d("SignUp", "Data recording successful")
                                 callback(true, null)
                             }
                             .addOnFailureListener { e ->
-                                Log.e("SignUp", "Lỗi ghi dữ liệu: ${e.message}")
+                                Log.e("SignUp", "Data write error: ${e.message}")
                                 callback(false, e.message)
                             }
                     } else {
-                        callback(false, "Không lấy được UID người dùng")
+                        callback(false, "Unable to get user UID")
                     }
                 } else {
-                    val errorMsg = task.exception?.message ?: "Lỗi không xác định"
-                    Log.e("SignUp", "Lỗi đăng ký: $errorMsg")
+                    val errorMsg = task.exception?.message ?: "Unknown error"
+                    Log.e("SignUp", "Registration error: $errorMsg")
                     callback(false, errorMsg)
                 }
             }
@@ -72,7 +72,7 @@ class UserRepository {
                             .addOnSuccessListener { callback(true, null) }
                             .addOnFailureListener { callback(false, it.message) }
                     } else {
-                        callback(false, "Không tìm thấy UID người dùng")
+                        callback(false, "User UID not found")
                     }
                 } else {
                     callback(false, task.exception?.message)
