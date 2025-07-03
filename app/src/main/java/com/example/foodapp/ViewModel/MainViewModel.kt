@@ -23,6 +23,8 @@ class MainViewModel:ViewModel() {
     private val ordersRepository = OrdersRepository()
     private val voucherRepo = VoucherRepository()
 
+
+
     fun loadBanner(): LiveData<MutableList<BannerModel>> {
         return repository.loadBanner()
     }
@@ -55,15 +57,12 @@ class MainViewModel:ViewModel() {
         return ordersRepository.getOrders()
     }
 
+
     private val _voucherLiveData = MutableLiveData<Pair< VouchersModel?, String?>>()
     val voucherLiveData: LiveData<Pair<VouchersModel?, String?>>
         get() = _voucherLiveData
 
-    fun validateVoucher(code: String) {
-        voucherRepo.checkVoucher(code) { voucher, error ->
-            _voucherLiveData.value = Pair(voucher, error)
-        }
-    }
+
     fun decreaseVoucherUsage(code: String) {
         paymentRepository.decreaseVoucherUsage(code)
     }

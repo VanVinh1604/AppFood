@@ -42,31 +42,39 @@
             android:textColor="#FF5722"
             android:layout_marginTop="4dp" />
 
-        <!-- Dòng chứa biểu tượng trạng thái -->
-        <LinearLayout
+        <!-- Voucher -->
+        <TextView
+            android:id="@+id/voucherTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:text="🎟️ Voucher: ABC123 (−20.000đ)"
+            android:textColor="#4CAF50"
+            android:textStyle="italic"
+            android:textSize="13sp"
             android:layout_marginTop="4dp"
+            android:visibility="gone" />
+
+        <!-- Trạng thái -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp"
             android:gravity="center_vertical">
 
-            <!-- Hình tròn trạng thái -->
             <TextView
                 android:id="@+id/statusTxt"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Tình trạng: Đang xử lý"
-                android:layout_marginTop="4dp" />
+                android:text="Tình trạng: Đang xử lý" />
 
-            <!-- Hình tròn trạng thái -->
             <View
                 android:id="@+id/statusIndicator"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:layout_marginTop="4dp"
                 android:layout_marginStart="8dp"
-                android:background="@drawable/status_circle_defaul" /> <!-- sẽ bị thay trong code -->
-
+                android:background="@drawable/status_circle_defaul" />
         </LinearLayout>
 
         <!-- Ngày đặt -->

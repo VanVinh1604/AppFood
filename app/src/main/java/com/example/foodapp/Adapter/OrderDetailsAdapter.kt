@@ -28,8 +28,8 @@ class OrderDetailsAdapter (
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding) {
             textDrinkName.text = drinkNames[position]
-            textDrinkPrice.text = "Giá: ${drinkPrices.getOrNull(position) ?: "0"} đ"
-            textDrinkQuantity.text = "Số lượng: ${drinkQuantities.getOrNull(position) ?: 1}"
+            textDrinkPrice.text = "Price: ${drinkPrices.getOrNull(position) ?: "0"} đ"
+            textDrinkQuantity.text = "Quantity: ${drinkQuantities.getOrNull(position) ?: 1}"
 
             val size = drinkSizes.getOrNull(position)
             textDrinkSize.text = if (!size.isNullOrBlank()) "Size: $size" else "Size: -"
@@ -39,5 +39,4 @@ class OrderDetailsAdapter (
                 .into(imageDrink)
         }
     }
-
 }

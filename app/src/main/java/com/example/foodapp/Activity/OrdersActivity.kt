@@ -1,5 +1,6 @@
 package com.example.foodapp.Activity
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,8 +14,16 @@ import com.example.foodapp.ViewModel.MainViewModel
 import com.example.foodapp.databinding.ActivityOrdersBinding
 import com.example.foodapp.utils.dp
 import android.graphics.Typeface
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import com.example.foodapp.Adapter.OrdersAdapter
 import com.example.foodapp.Domain.OrderDetails
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class OrdersActivity : AppCompatActivity() {
@@ -22,6 +31,11 @@ class OrdersActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var adapter: OrdersAdapter
     private var allOrders: List<OrderDetails> = emptyList()
+//    private var dateFilterLiveData: LiveData<List<OrderDetails>>? = null
+    private var currentStatusFilter = "new"
+    private var selectedDate: String? = null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +64,21 @@ class OrdersActivity : AppCompatActivity() {
             updateFilterUI("new")
         }
 
+        binding.clearDateFilterBtn.setOnClickListener {
+            selectedDate = null
+            Toast.makeText(this, "Đã xóa lọc ngày", Toast.LENGTH_SHORT).show()
+            showOrders(currentStatusFilter)
+        }
+
+
         binding.filterDelivered.setOnClickListener {
             showOrders("delivered")
             updateFilterUI("delivered")
         }
+        val dateFilterTextView = findViewById<TextView>(R.id.dateFilterTextView)
+        dateFilterTextView.setOnClickListener { showDatePicker() }
     }
+
 
     private fun setupRecyclerView() {
         adapter = OrdersAdapter { selectedOrder ->
@@ -76,20 +100,68 @@ class OrdersActivity : AppCompatActivity() {
             } else {
                 binding.emptyOrderView.visibility = View.GONE
                 binding.orderRecyclerView.visibility = View.VISIBLE
-                showOrders("new") // Mặc định hiển thị đơn hàng mới
+
+                showOrders("new")
                 updateFilterUI("new")
             }
         }
     }
 
-    private fun showOrders(filter: String) {
-        val filtered = when (filter) {
-            "delivered" -> allOrders.filter { it.deliveryStatus?.lowercase() == "delivered" }
-            "new" -> allOrders.filter { it.deliveryStatus?.lowercase() != "delivered" }
-            else -> allOrders
-        }
-        adapter.setOrders(filtered)
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
+                selectedDate = "$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear"
+                Toast.makeText(this, "Lọc theo ngày: $selectedDate", Toast.LENGTH_SHORT).show()
+
+                // Gọi lọc lại theo trạng thái hiện tại + ngày mới chọn
+                showOrders(currentStatusFilter)
+            },
+            year, month, day
+        )
+        datePickerDialog.show()
     }
+
+
+
+    private fun showOrders(filter: String) {
+        currentStatusFilter = filter
+
+        val filtered = allOrders.filter { order ->
+            val matchStatus = when (filter) {
+                "delivered" -> order.deliveryStatus?.lowercase() == "delivered"
+                "new" -> order.deliveryStatus?.lowercase() != "delivered"
+                else -> true
+            }
+
+            val matchDate = selectedDate?.let { dateStr ->
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val selectedCalendar = Calendar.getInstance()
+                selectedCalendar.time = sdf.parse(dateStr)!!
+
+                val orderCalendar = Calendar.getInstance()
+                orderCalendar.timeInMillis = order.currentTime
+
+                orderCalendar.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR) &&
+                        orderCalendar.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH) &&
+                        orderCalendar.get(Calendar.DAY_OF_MONTH) == selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            } ?: true // nếu chưa chọn ngày thì mặc định là đúng
+
+            matchStatus && matchDate
+        }
+
+        adapter.setOrders(filtered)
+        binding.orderRecyclerView.visibility = if (filtered.isEmpty()) View.GONE else View.VISIBLE
+        binding.emptyOrderView.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
+
+        binding.clearDateFilterBtn.visibility = if (selectedDate != null) View.VISIBLE else View.GONE
+    }
+
 
     private fun updateFilterUI(active: String) {
         if (active == "new") {

@@ -27,45 +27,54 @@ class OrdersAdapter(private val onItemClick: (OrderDetails) -> Unit) : RecyclerV
         fun bind(order: OrderDetails) {
             val context = binding.root.context
 
-            binding.orderIdTxt.text = "Mã đơn hàng: ${order.itemPushKey ?: "Không có"}"
-            binding.nameTxt.text = order.customerName ?: "Không rõ"
-            binding.priceTxt.text = "Tổng tiền: $${order.totalPrice ?: "0.0"}"
-            binding.addressTxt.text = "Địa chỉ: ${order.address ?: "Không rõ"}"
+            binding.orderIdTxt.text = "Order ID: ${order.itemPushKey ?: "N/A"}"
+            binding.nameTxt.text = order.customerName ?: "Unknown"
+            binding.priceTxt.text = "Total: $${order.totalPrice ?: "0.0"}"
+
+            if (!order.voucherCode.isNullOrEmpty() && !order.discountAmount.isNullOrEmpty()) {
+                binding.voucherTxt.visibility = android.view.View.VISIBLE
+                binding.voucherTxt.text =
+                    "🎟️ Voucher: ${order.voucherCode} (−${order.discountAmount}đ)"
+            } else {
+                binding.voucherTxt.visibility = android.view.View.GONE
+            }
+
+            binding.addressTxt.text = "Address: ${order.address ?: "Unknown"}"
 
             val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-            binding.timeTxt.text = "Ngày đặt: ${sdf.format(Date(order.currentTime))}"
+            binding.timeTxt.text = "Order Time: ${sdf.format(Date(order.currentTime))}"
 
             val circleDrawable = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
                 setSize(24, 24)
             }
 
-            // Tình trạng đơn hàng
+            // Order status
             when (order.deliveryStatus?.lowercase(Locale.getDefault())) {
                 "in_progress" -> {
-                    binding.statusTxt.text = "Tình trạng: In Progress"
+                    binding.statusTxt.text = "Status: In Progress"
                     circleDrawable.setColor(ContextCompat.getColor(context, R.color.yellow))
                 }
 
                 "shipping" -> {
-                    binding.statusTxt.text = "Tình trạng: Shipping"
+                    binding.statusTxt.text = "Status: Shipping"
                     circleDrawable.setColor(ContextCompat.getColor(context, R.color.yellow))
                 }
 
                 "delivered" -> {
-                    binding.statusTxt.text = "Tình trạng: Delivered"
+                    binding.statusTxt.text = "Status: Delivered"
                     circleDrawable.setColor(ContextCompat.getColor(context, R.color.green))
                 }
 
                 else -> {
-                    binding.statusTxt.text = "Tình trạng: Unconfirmed"
+                    binding.statusTxt.text = "Status: Unconfirmed"
                     circleDrawable.setColor(ContextCompat.getColor(context, R.color.red))
                 }
             }
 
             binding.statusIndicator.background = circleDrawable
 
-            // 👇 Bắt sự kiện click
+            // Click event
             binding.root.setOnClickListener {
                 onItemClick(order)
             }
@@ -83,5 +92,4 @@ class OrdersAdapter(private val onItemClick: (OrderDetails) -> Unit) : RecyclerV
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(orders[position])
     }
-
 }

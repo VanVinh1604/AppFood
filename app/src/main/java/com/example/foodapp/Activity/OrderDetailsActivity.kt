@@ -67,16 +67,30 @@ class OrderDetailsActivity :AppCompatActivity() {
     private fun bindOrderData() {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
-        findViewById<TextView>(R.id.textOrderId).text = "Mã đơn hàng: ${order?.itemPushKey ?: ""}"
-        findViewById<TextView>(R.id.textCustomerInfo).text = "Khách hàng: ${order?.customerName ?: ""}"
-        findViewById<TextView>(R.id.textPhone).text = "Số điện thoại: ${order?.phoneNumber ?: ""}"
-        findViewById<TextView>(R.id.textAddress).text = "Địa chỉ: ${order?.address ?: ""}"
-        findViewById<TextView>(R.id.textTotalPrice).text = "Tổng tiền: ${order?.totalPrice ?: ""} đ"
-        findViewById<TextView>(R.id.textPaymentStatus).text = "Thanh toán: ${order?.paymentStatus ?: "Chưa xác định"}"
-        findViewById<TextView>(R.id.textDeliveryStatus).text = "Tình trạng: ${order?.deliveryStatus ?: "Đang xử lý"}"
-        findViewById<TextView>(R.id.textNote).text = "Ghi chú: ${order?.note ?: "Không có"}"
+        findViewById<TextView>(R.id.textOrderId).text = "Order ID: ${order?.itemPushKey ?: ""}"
+        findViewById<TextView>(R.id.textCustomerInfo).text = "Customer: ${order?.customerName ?: ""}"
+        findViewById<TextView>(R.id.textPhone).text = "Phone: ${order?.phoneNumber ?: ""}"
+        findViewById<TextView>(R.id.textAddress).text = "Address: ${order?.address ?: ""}"
+        findViewById<TextView>(R.id.textPaymentStatus).text = "Payment: ${order?.paymentStatus ?: "Unknown"}"
+        findViewById<TextView>(R.id.textDeliveryStatus).text = "Status: ${order?.deliveryStatus ?: "Processing"}"
+        findViewById<TextView>(R.id.textNote).text = "Note: ${order?.note ?: "None"}"
         findViewById<TextView>(R.id.textOrderTime).text =
-            "Ngày đặt: ${dateFormat.format(Date(order?.currentTime ?: 0))}"
+            "Order time: ${dateFormat.format(Date(order?.currentTime ?: 0))}"
+
+        val totalPrice = order?.totalPrice?.toDoubleOrNull() ?: 0.0
+        val discount = order?.discountAmount?.toDoubleOrNull() ?: 0.0
+        val originalPrice = totalPrice + discount
+
+        findViewById<TextView>(R.id.textTotalPrice).text = String.format("Total: %.2f đ", totalPrice)
+        findViewById<TextView>(R.id.textOriginalPrice).text = "Original: ${String.format("%.2f đ", originalPrice)}"
+
+        val voucherView = findViewById<TextView>(R.id.textVoucherInfo)
+        if (!order?.voucherCode.isNullOrBlank()) {
+            voucherView.visibility = android.view.View.VISIBLE
+            voucherView.text = "🎟️ Voucher: ${order?.voucherCode} - Discount ${String.format("%.2f đ", discount)}"
+        } else {
+            voucherView.visibility = android.view.View.GONE
+        }
     }
 
     private fun listenToDeliveryStatusUpdates() {
@@ -102,10 +116,8 @@ class OrderDetailsActivity :AppCompatActivity() {
     }
 
     private fun updateOrderStepUI(status: String?) {
-        // Reset về màu xám cho tất cả
         stepCircles.forEach { it.setBackgroundResource(R.drawable.circle_gray) }
 
-        // Trích trạng thái và xác định bước tương ứng
         val stepIndex = when (status?.trim()?.lowercase(Locale.ROOT)) {
             "unconfirmed" -> 0
             "in progress" -> 1
@@ -113,7 +125,7 @@ class OrderDetailsActivity :AppCompatActivity() {
             "delivered" -> 3
             null, "", "pending" -> 0
             else -> {
-                Log.w("OrderStatus", "Trạng thái không xác định: $status")
+                Log.w("OrderStatus", "Unknown status: $status")
                 return
             }
         }
