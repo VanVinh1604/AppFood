@@ -26,6 +26,8 @@ class FavoritesAdapter(
         val tvDrinkName: TextView = view.findViewById(R.id.tvDrinkName)
         val tvDrinkPrice: TextView = view.findViewById(R.id.tvDrinkPrice)
         val btnRemoveFavorite: ImageView = view.findViewById(R.id.btnRemoveFavorite)
+        val tvRating: TextView = view.findViewById(R.id.tvRating)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -48,6 +50,7 @@ class FavoritesAdapter(
 
         holder.tvDrinkName.text = drinkName
         holder.tvDrinkPrice.text = "$drinkPrice$"
+        holder.tvRating.text = "⭐ ..." // loading tạm thời
 
         Glide.with(context)
             .load(drinkImage)
@@ -70,7 +73,18 @@ class FavoritesAdapter(
                     Toast.makeText(context, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show()
                 }
         }
+
+        // 🔍 Lấy rating từ Firebase /Items/{drinkId}/rating
+        val itemsRef = FirebaseDatabase.getInstance().getReference("Items").child(drinkId)
+        itemsRef.get().addOnSuccessListener { snapshot ->
+            val rating = snapshot.child("rating").getValue(Double::class.java) ?: 0.0
+            holder.tvRating.text = "⭐ %.1f".format(rating)
+        }.addOnFailureListener {
+            holder.tvRating.text = "⭐ 0.0"
+        }
     }
+
+
 
     override fun getItemCount(): Int = list.size
 

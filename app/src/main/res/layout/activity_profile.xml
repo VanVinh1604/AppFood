@@ -72,15 +72,16 @@
                 android:gravity="center"
                 android:layout_marginTop="24dp">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/profile_image"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:src="@drawable/profile"
-                    android:background="@android:color/darker_gray"
                     android:scaleType="centerCrop"
                     android:layout_marginBottom="12dp"
-                    android:contentDescription="Avatar" />
+                    android:contentDescription="Avatar"
+                    app:shapeAppearanceOverlay="@style/CircleAvatarImage"/>
+
 
                 <TextView
                     android:id="@+id/profile_name"
@@ -201,7 +202,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="About Food App"
+                        android:text="About"
                         android:textSize="16sp"
                         android:textColor="@color/black" />
 

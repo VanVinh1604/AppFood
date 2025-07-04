@@ -89,6 +89,9 @@ dependencies {
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0-beta01")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+
+
     implementation(libs.firebase.storage)
     implementation(libs.firebase.messaging)
     implementation (libs.firebase.database)
