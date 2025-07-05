@@ -23,6 +23,7 @@ import com.example.foodapp.utils.dp
 import com.example.foodapp.Repository.OrdersRepository
 
 
+
 class CartActivity : AppCompatActivity() {
     lateinit var binding: ActivityCartBinding
     lateinit var managmentCart: ManagmentCart
@@ -86,6 +87,7 @@ class CartActivity : AppCompatActivity() {
 
     private fun setupCheckoutButton() {
         binding.CheckoutBtn.setOnClickListener {
+
             // Kiểm tra đơn hàng chưa hoàn thành
             OrdersRepository().hasUnfinishedOrders { hasUnfinished ->
                 if (hasUnfinished) {

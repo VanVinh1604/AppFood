@@ -11,16 +11,18 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.foodapp.Activity.DetailActivity
-import com.example.foodapp.Domain.FavoritesModel
+
+
 import com.example.foodapp.Domain.ItemsModel
 import com.example.foodapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import java.io.Serializable
+
 
 class FavoritesAdapter(
     private val context: Context,
-    private val list: MutableList<FavoritesModel>
+    private val list: MutableList<ItemsModel>
+
 ) : RecyclerView.Adapter<FavoritesAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -28,6 +30,9 @@ class FavoritesAdapter(
         val tvDrinkName: TextView = view.findViewById(R.id.tvDrinkName)
         val tvDrinkPrice: TextView = view.findViewById(R.id.tvDrinkPrice)
         val btnRemoveFavorite: ImageView = view.findViewById(R.id.btnRemoveFavorite)
+
+        val tvRating: TextView = view.findViewById(R.id.tvRating)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -37,52 +42,59 @@ class FavoritesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-        println("FavoritesModel: drinkId=${item.drinkId}, drinkName=${item.drinkName}, drinkImage=${item.drinkImage}, drinkPrice=${item.drinkPrice}")
 
-        if (item.drinkId.isEmpty() || item.drinkName.isEmpty() || item.drinkImage.isEmpty()) {
+        val drinkId = item.drinkId ?: ""
+        val drinkName = item.drinkName ?: ""
+        val drinkImage = item.drinkImage ?: ""
+        val drinkPrice = item.drinkPrice ?: 0.0
+
+        if (drinkId.isEmpty() || drinkName.isEmpty() || drinkImage.isEmpty()) {
             Toast.makeText(context, "Dữ liệu sản phẩm không đầy đủ", Toast.LENGTH_SHORT).show()
             return
         }
 
-        holder.tvDrinkName.text = item.drinkName
-        holder.tvDrinkPrice.text = "${item.drinkPrice}$"
+        holder.tvDrinkName.text = drinkName
+        holder.tvDrinkPrice.text = "$drinkPrice$"
+        holder.tvRating.text = "⭐ ..." // loading tạm thời
 
         Glide.with(context)
-            .load(item.drinkImage)
+            .load(drinkImage)
             .placeholder(R.drawable.placeholder)
             .error(R.drawable.placeholder)
             .into(holder.imgDrink)
 
         holder.imgDrink.setOnClickListener {
-            val itemToSend = ItemsModel(
-                drinkId = item.drinkId,
-                drinkName = item.drinkName,
-                drinkPrice = item.drinkPrice,
-                drinkImage = item.drinkImage,
-                drinkDescription = item.drinkDescription,
-                drinkExtra = item.drinkExtra
-            )
-            println("Item to send: drinkId=${itemToSend.drinkId}, drinkName=${itemToSend.drinkName}, drinkImage=${itemToSend.drinkImage}")
+
             val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra("object", itemToSend)
+            intent.putExtra("object", item)
             context.startActivity(intent)
         }
 
         holder.btnRemoveFavorite.setOnClickListener {
             val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnClickListener
             FirebaseDatabase.getInstance().getReference("Favorites")
-                .child(userId).child(item.drinkId)
+                .child(userId).child(drinkId)
                 .removeValue()
                 .addOnSuccessListener {
                     Toast.makeText(context, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show()
                 }
         }
+
+        // 🔍 Lấy rating từ Firebase /Items/{drinkId}/rating
+        val itemsRef = FirebaseDatabase.getInstance().getReference("Items").child(drinkId)
+        itemsRef.get().addOnSuccessListener { snapshot ->
+            val rating = snapshot.child("rating").getValue(Double::class.java) ?: 0.0
+            holder.tvRating.text = "⭐ %.1f".format(rating)
+        }.addOnFailureListener {
+            holder.tvRating.text = "⭐ 0.0"
+        }
     }
+
 
 
     override fun getItemCount(): Int = list.size
 
-    fun updateData(newList: List<FavoritesModel>) {
+    fun updateData(newList: List<ItemsModel>) {
         list.clear()
         list.addAll(newList)
         notifyDataSetChanged()

@@ -66,7 +66,6 @@ class OrderDetailsActivity :AppCompatActivity() {
 
     private fun bindOrderData() {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-
         findViewById<TextView>(R.id.textOrderId).text = "Order ID: ${order?.itemPushKey ?: ""}"
         findViewById<TextView>(R.id.textCustomerInfo).text = "Customer: ${order?.customerName ?: ""}"
         findViewById<TextView>(R.id.textPhone).text = "Phone: ${order?.phoneNumber ?: ""}"
@@ -117,7 +116,6 @@ class OrderDetailsActivity :AppCompatActivity() {
 
     private fun updateOrderStepUI(status: String?) {
         stepCircles.forEach { it.setBackgroundResource(R.drawable.circle_gray) }
-
         val stepIndex = when (status?.trim()?.lowercase(Locale.ROOT)) {
             "unconfirmed" -> 0
             "in progress" -> 1
@@ -126,6 +124,7 @@ class OrderDetailsActivity :AppCompatActivity() {
             null, "", "pending" -> 0
             else -> {
                 Log.w("OrderStatus", "Unknown status: $status")
+
                 return
             }
         }

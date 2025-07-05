@@ -66,7 +66,6 @@ class PaymentRepository {
         })
     }
 
-
     fun saveOrder(order: OrderDetails, onResult: (Boolean) -> Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {

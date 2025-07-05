@@ -10,7 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodapp.Adapter.FavoritesAdapter
-import com.example.foodapp.Domain.FavoritesModel
+
+import com.example.foodapp.Domain.ItemsModel
 import com.example.foodapp.databinding.ActivityFavoritesBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -22,7 +23,8 @@ class FavoritesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFavoritesBinding
     private lateinit var adapter: FavoritesAdapter
     private lateinit var database: DatabaseReference
-    private val favoritesList = mutableListOf<FavoritesModel>()
+    private val favoritesList = mutableListOf<ItemsModel>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,11 +50,11 @@ class FavoritesActivity : AppCompatActivity() {
 
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val tempList = mutableListOf<FavoritesModel>()
+                val tempList = mutableListOf<ItemsModel>()
                 for (itemSnapshot in snapshot.children) {
-                    val favorite = itemSnapshot.getValue(FavoritesModel::class.java)
-                    if (favorite != null && favorite.drinkId.isNotEmpty()) {
-                        tempList.add(favorite)
+                    val item = itemSnapshot.getValue(ItemsModel::class.java)
+                    if (item != null && !item.drinkId.isNullOrEmpty()) {
+                        tempList.add(item)
                     }
                 }
                 adapter.updateData(tempList)
@@ -60,9 +62,9 @@ class FavoritesActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle error
-            }
 
+                Toast.makeText(this@FavoritesActivity, "Lỗi khi tải dữ liệu yêu thích", Toast.LENGTH_SHORT).show()
+            }
         })
     }
 
@@ -113,3 +115,4 @@ class FavoritesActivity : AppCompatActivity() {
         }
     }
 }
+

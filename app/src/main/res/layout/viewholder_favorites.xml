@@ -24,6 +24,25 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+        <!-- NHÃN “Yêu thích” giữa ảnh -->
+        <TextView
+            android:id="@+id/labelFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Favorite"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_favorite_label"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
+            app:layout_constraintTop_toTopOf="@id/imgDrink"
+            app:layout_constraintStart_toStartOf="@id/imgDrink"
+            app:layout_constraintEnd_toEndOf="@id/imgDrink"
+            app:layout_constraintHorizontal_bias="0.5" />
+
+        <!-- TÊN SP -->
+
         <TextView
             android:id="@+id/tvDrinkName"
             android:layout_width="0dp"
@@ -38,17 +57,38 @@
             app:layout_constraintEnd_toStartOf="@id/btnRemoveFavorite"
             app:layout_constraintHorizontal_bias="0" />
 
-        <TextView
-            android:id="@+id/tvDrinkPrice"
+
+        <!-- GIÁ + ĐÁNH GIÁ -->
+        <LinearLayout
+            android:id="@+id/layoutPriceRating"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginTop="4dp"
-            android:text="$4.99"
-            android:textSize="16sp"
-            android:textColor="@color/darkBrown"
-            app:layout_constraintStart_toStartOf="@id/tvDrinkName"
             app:layout_constraintTop_toBottomOf="@id/tvDrinkName"
-            app:layout_constraintEnd_toEndOf="@id/tvDrinkName" />
+            app:layout_constraintStart_toStartOf="@id/tvDrinkName"
+            app:layout_constraintEnd_toEndOf="@id/tvDrinkName">
+
+            <TextView
+                android:id="@+id/tvDrinkPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$4.99"
+                android:textSize="16sp"
+                android:textColor="@color/darkBrown"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="⭐ 4.5"
+                android:textSize="14sp"
+                android:textColor="@color/darkBrown" />
+        </LinearLayout>
+
+        <!-- NÚT XÓA -->
 
         <ImageView
             android:id="@+id/btnRemoveFavorite"

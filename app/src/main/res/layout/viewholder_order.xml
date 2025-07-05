@@ -42,6 +42,7 @@
             android:textColor="#FF5722"
             android:layout_marginTop="4dp" />
 
+
         <!-- Voucher -->
         <TextView
             android:id="@+id/voucherTxt"
@@ -75,6 +76,7 @@
                 android:layout_height="12dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/status_circle_defaul" />
+
         </LinearLayout>
 
         <!-- Ngày đặt -->

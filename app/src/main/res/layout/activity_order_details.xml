@@ -213,8 +213,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
-
         <!-- Địa chỉ -->
         <TextView
             android:id="@+id/textAddressTitle"
@@ -283,8 +281,6 @@
             android:textColor="@color/darkBrown"
             android:textStyle="bold"
             android:layout_marginTop="4dp" />
-
-
         <!-- Thời gian -->
         <TextView
             android:id="@+id/textOrderTime"
@@ -294,9 +290,6 @@
             android:textColor="@color/darkBrown"
             android:textStyle="bold"
             android:layout_marginTop="4dp" />
-
-
-
 
         <!-- Danh sách sản phẩm -->
         <TextView
@@ -346,7 +339,6 @@
             android:orientation="horizontal"
             android:padding="8dp"
             android:background="#F5F5F5">
-
 
             <TextView
                 android:layout_width="0dp"

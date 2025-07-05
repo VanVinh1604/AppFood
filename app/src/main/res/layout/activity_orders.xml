@@ -122,6 +122,7 @@
                 android:background="@drawable/filter_selector"
                 android:gravity="center"
                 android:contentDescription="Clear date filter" />
+
         </LinearLayout>
 
         <!-- RecyclerView nằm phía dưới bộ lọc -->
@@ -179,7 +180,6 @@
             app:layout_constraintTop_toBottomOf="@id/orderRecyclerWrapper"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="12dp" />
-
 
         <!-- RecyclerView ưu đãi -->
         <androidx.recyclerview.widget.RecyclerView

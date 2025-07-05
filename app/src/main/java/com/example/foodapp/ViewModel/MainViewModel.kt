@@ -16,14 +16,13 @@ import com.example.foodapp.Repository.OrdersRepository
 import com.example.foodapp.Repository.PaymentRepository
 import com.example.foodapp.Repository.VoucherRepository
 
+
 class MainViewModel:ViewModel() {
     private val repository = MainRepository()
     private val commentrepository = CommentRepository()
     private val paymentRepository = PaymentRepository()
     private val ordersRepository = OrdersRepository()
     private val voucherRepo = VoucherRepository()
-
-
 
     fun loadBanner(): LiveData<MutableList<BannerModel>> {
         return repository.loadBanner()
@@ -56,7 +55,6 @@ class MainViewModel:ViewModel() {
     fun getOrderHistory(): LiveData<List<OrderDetails>> {
         return ordersRepository.getOrders()
     }
-
 
     private val _voucherLiveData = MutableLiveData<Pair< VouchersModel?, String?>>()
     val voucherLiveData: LiveData<Pair<VouchersModel?, String?>>
@@ -100,7 +98,5 @@ class MainViewModel:ViewModel() {
         val repo = OrdersRepository()
         repo.hasUnfinishedOrders(callback)
     }
-
-
 
 }

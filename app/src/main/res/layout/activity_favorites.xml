@@ -22,6 +22,22 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp" />
 
+    <!-- Tiêu đề Yêu thích -->
+    <TextView
+        android:id="@+id/tvTitleFavorites"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Favorite"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/backBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp" />
+
     <!-- Text thông báo trống -->
     <TextView
         android:id="@+id/emptyText"

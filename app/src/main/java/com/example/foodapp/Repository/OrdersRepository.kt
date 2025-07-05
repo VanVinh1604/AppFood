@@ -1,5 +1,6 @@
 package com.example.foodapp.Repository
 
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,6 +8,7 @@ import com.example.foodapp.Domain.OrderDetails
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.util.Locale
+
 
 class OrdersRepository {
     private val database = FirebaseDatabase.getInstance().reference
@@ -37,6 +39,7 @@ class OrdersRepository {
 
         return orderListLiveData
     }
+
 
     fun hasUnfinishedOrders(callback: (Boolean) -> Unit) {
         val uid = auth.currentUser?.uid ?: return callback(false)

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.foodapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -58,9 +59,23 @@ class ProfileActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val name = snapshot.child("nameCustomer").getValue(String::class.java)
                 val email = snapshot.child("emailCustomer").getValue(String::class.java)
+                val avatarUrl = snapshot.child("avatarUrl").getValue(String::class.java)
+
+                val dateTextView = findViewById<TextView>(R.id.date_time_text)
+
+                val currentTime = java.util.Calendar.getInstance().time
+                val sdf = java.text.SimpleDateFormat("EEEE, dd/MM/yyyy - HH:mm", java.util.Locale.getDefault())
+                val formattedDate = sdf.format(currentTime)
+
+                dateTextView.text = "Today is $formattedDate"
+
 
                 profileName.text = name ?: "No name"
                 profileUsername.text = email ?: ""
+
+                if (!avatarUrl.isNullOrEmpty()) {
+                    Glide.with(this@ProfileActivity).load(avatarUrl).into(profileImage)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {

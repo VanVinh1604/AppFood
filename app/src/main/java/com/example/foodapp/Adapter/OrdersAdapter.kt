@@ -53,6 +53,7 @@ class OrdersAdapter(private val onItemClick: (OrderDetails) -> Unit) : RecyclerV
             when (order.deliveryStatus?.lowercase(Locale.getDefault())) {
                 "in_progress" -> {
                     binding.statusTxt.text = "Status: In Progress"
+
                     circleDrawable.setColor(ContextCompat.getColor(context, R.color.yellow))
                 }
 
@@ -63,10 +64,12 @@ class OrdersAdapter(private val onItemClick: (OrderDetails) -> Unit) : RecyclerV
 
                 "delivered" -> {
                     binding.statusTxt.text = "Status: Delivered"
+
                     circleDrawable.setColor(ContextCompat.getColor(context, R.color.green))
                 }
 
                 else -> {
+
                     binding.statusTxt.text = "Status: Unconfirmed"
                     circleDrawable.setColor(ContextCompat.getColor(context, R.color.red))
                 }
@@ -74,7 +77,6 @@ class OrdersAdapter(private val onItemClick: (OrderDetails) -> Unit) : RecyclerV
 
             binding.statusIndicator.background = circleDrawable
 
-            // Click event
             binding.root.setOnClickListener {
                 onItemClick(order)
             }
@@ -92,4 +94,5 @@ class OrdersAdapter(private val onItemClick: (OrderDetails) -> Unit) : RecyclerV
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(orders[position])
     }
+
 }

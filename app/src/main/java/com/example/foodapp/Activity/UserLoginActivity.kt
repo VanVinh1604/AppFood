@@ -36,6 +36,7 @@ class UserLoginActivity : AppCompatActivity() {
     private lateinit var signInRequest: BeginSignInRequest
     private val REQ_ONE_TAP = 100
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -56,7 +57,6 @@ class UserLoginActivity : AppCompatActivity() {
             .build()
 
 
-
         setContentView(binding.root)
 
         setupViewBinding()
@@ -64,6 +64,7 @@ class UserLoginActivity : AppCompatActivity() {
         setupLoginClick()
         setupSignUpClick()
         setupGoogleSignInClick()
+
         checkLoginStatus()
 
     }
@@ -121,7 +122,6 @@ class UserLoginActivity : AppCompatActivity() {
     private fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
-
 
 private fun setupGoogleSignInClick() {
     binding.btnGoogle.setOnClickListener {
@@ -191,6 +191,5 @@ private fun setupGoogleSignInClick() {
             apply()
         }
     }
-
 
 }

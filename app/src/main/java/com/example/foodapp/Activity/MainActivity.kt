@@ -1,12 +1,20 @@
 package com.example.foodapp.Activity
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.graphics.Typeface
+
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -15,27 +23,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.foodapp.Adapter.CategoryAdapter
 import com.example.foodapp.Adapter.PopularAdapter
-import com.example.foodapp.Domain.CategoryModel
 import com.example.foodapp.Domain.ItemsModel
 import com.example.foodapp.R
 import com.example.foodapp.ViewModel.MainViewModel
 import com.example.foodapp.databinding.ActivityMainBinding
 import com.example.foodapp.utils.dp
+import com.example.foodapp.FloatingChatService
 import com.google.firebase.messaging.FirebaseMessaging
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.os.Build
-import android.util.Log
-import android.widget.Toast
-
 
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private val viewModel = MainViewModel()
-//    private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var popularAdapter: PopularAdapter
-//
 //    private var categoryList = listOf<CategoryModel>()  // Lưu data để search
     private var popularList = listOf<ItemsModel>()    // Lưu data để search
 
@@ -45,6 +45,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Kiểm tra quyền overlay để hiển thị icon chat nổi
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+            startActivityForResult(intent, 1234)
+        } else {
+            startService(Intent(this, FloatingChatService::class.java))
+        }
 
         initBanner()
         initCategory()
@@ -52,6 +59,18 @@ class MainActivity : AppCompatActivity() {
         initBottomMenu()
         initSearchButton()
 
+
+        // initFirebaseMessaging() nếu bạn muốn dùng thông báo FCM sau này
+    }
+
+    // Khi user quay lại từ màn hình cấp quyền overlay
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1234 && Settings.canDrawOverlays(this)) {
+            startService(Intent(this, FloatingChatService::class.java))
+        } else {
+            Toast.makeText(this, "Bạn chưa cấp quyền hiển thị icon chat", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initSearchButton() {
@@ -84,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         val cartBtn = rootView.findViewById<View>(R.id.cartBtn)
         cartBtn.setOnClickListener {
             startActivity(Intent(this, CartActivity::class.java))
+
         }
 
         // FAVORITE
@@ -105,8 +125,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
 
     private fun initBanner() {
         binding.progressBarBanner.visibility = View.VISIBLE
@@ -178,3 +196,4 @@ class MainActivity : AppCompatActivity() {
 
 
 }
+

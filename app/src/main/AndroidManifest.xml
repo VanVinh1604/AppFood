@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -54,6 +57,17 @@
 
         <!-- Splash - Launcher -->
         <activity android:name=".Activity.SplashActivity" android:exported="true">
+
+
+        <activity
+            android:name=".Activity.ChatActivity"
+            android:exported="false" />
+
+        <service
+            android:name=".FloatingChatService"
+            android:enabled="true"
+            android:exported="false" /> <!-- Activity từ nhánh main -->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -64,6 +78,7 @@
         <activity android:name=".NotificationMessages" android:exported="true" />
 
         <!-- Firebase Messaging -->
+
         <service
             android:name=".fcm.MyFirebaseMessaging"
             android:enabled="true"
@@ -75,5 +90,6 @@
 
         <!-- Main activity -->
         <activity android:name=".Activity.MainActivity" android:exported="true" />
+
     </application>
 </manifest>

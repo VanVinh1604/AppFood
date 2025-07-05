@@ -26,6 +26,7 @@ import java.util.Calendar
 import java.util.Locale
 
 
+
 class OrdersActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOrdersBinding
     private val viewModel: MainViewModel by viewModels()
@@ -34,7 +35,6 @@ class OrdersActivity : AppCompatActivity() {
 //    private var dateFilterLiveData: LiveData<List<OrderDetails>>? = null
     private var currentStatusFilter = "new"
     private var selectedDate: String? = null
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,12 +64,12 @@ class OrdersActivity : AppCompatActivity() {
             updateFilterUI("new")
         }
 
+
         binding.clearDateFilterBtn.setOnClickListener {
             selectedDate = null
             Toast.makeText(this, "Đã xóa lọc ngày", Toast.LENGTH_SHORT).show()
             showOrders(currentStatusFilter)
         }
-
 
         binding.filterDelivered.setOnClickListener {
             showOrders("delivered")
@@ -78,7 +78,6 @@ class OrdersActivity : AppCompatActivity() {
         val dateFilterTextView = findViewById<TextView>(R.id.dateFilterTextView)
         dateFilterTextView.setOnClickListener { showDatePicker() }
     }
-
 
     private fun setupRecyclerView() {
         adapter = OrdersAdapter { selectedOrder ->
@@ -100,13 +99,11 @@ class OrdersActivity : AppCompatActivity() {
             } else {
                 binding.emptyOrderView.visibility = View.GONE
                 binding.orderRecyclerView.visibility = View.VISIBLE
-
                 showOrders("new")
                 updateFilterUI("new")
             }
         }
     }
-
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -161,7 +158,6 @@ class OrdersActivity : AppCompatActivity() {
 
         binding.clearDateFilterBtn.visibility = if (selectedDate != null) View.VISIBLE else View.GONE
     }
-
 
     private fun updateFilterUI(active: String) {
         if (active == "new") {

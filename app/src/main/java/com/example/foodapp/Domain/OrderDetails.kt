@@ -19,8 +19,10 @@ data class OrderDetails(
     var paymentStatus: String? = null,
     var deliveryStatus: String? = null,
     var itemPushKey: String? = null,
+
     var currentTime: Long = 0,
 
     var voucherCode: String? = null,
     var discountAmount: String? = null
+
 ): Serializable
