@@ -50,36 +50,19 @@ class MainActivity : AppCompatActivity() {
         initCategory()
         initPopular()
         initBottomMenu()
-        initSearch()
-
-//        initFirebaseMessaging()
+        initSearchButton()
 
     }
-    private fun initSearch() {
-        binding.searchView.setOnQueryTextListener(object :
-            androidx.appcompat.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let {
-                    filterItems(it)
-                }
-                return false
-            }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let {
-                    filterItems(it)
-                }
-                return false
-            }
-        })
-    }
+    private fun initSearchButton() {
+        binding.searchBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity, ItemsListActivity::class.java)
+            // Trong MainActivity
+            intent.putExtra("categoryId", "all")
+            intent.putExtra("category_Name", "All Products")
 
-    private fun filterItems(query: String) {
-        val filteredPopular = popularList.filter {
-            it.drinkName?.contains(query, ignoreCase = true) == true
+            startActivity(intent)
         }
-
-        popularAdapter.updateData(filteredPopular)
     }
 
     private fun initBottomMenu() {
@@ -138,17 +121,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun initCategory() {
         binding.progressBarCategory.visibility = View.VISIBLE
-        viewModel.loadCategory().observeForever {
-            binding.recyclerViewCat.layoutManager =
-                LinearLayoutManager(
-                    this@MainActivity, LinearLayoutManager.HORIZONTAL, false
-                )
-            binding.recyclerViewCat.adapter = CategoryAdapter(it)
+        viewModel.loadCategory().observe(this) { list ->
+            binding.recyclerViewCat.layoutManager = LinearLayoutManager(
+                this, LinearLayoutManager.HORIZONTAL, false
+            )
+            binding.recyclerViewCat.adapter = CategoryAdapter(list.toMutableList()) { cat ->
+                startActivity(Intent(this, ItemsListActivity::class.java).apply {
+                    putExtra("categoryId", cat.categoryId ?: "")
+                    putExtra("category_Name", cat.category_Name ?: "")
+                })
+            }
             binding.progressBarCategory.visibility = View.GONE
         }
-        viewModel.loadCategory()
     }
-
     private fun initPopular() {
         binding.progressBarPopular.visibility = View.VISIBLE
         viewModel.loadPopular().observe(this) { populars ->

@@ -32,12 +32,9 @@ class UserLoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityUserLoginBinding
     private lateinit var viewModel: UserViewModel  // Khai báo viewModel
     private lateinit var auth: FirebaseAuth
-    private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
     private val REQ_ONE_TAP = 100
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,13 +54,6 @@ class UserLoginActivity : AppCompatActivity() {
             )
             .setAutoSelectEnabled(true) // nếu tài khoản từng đăng nhập, tự động chọn
             .build()
-
-
-//        var gso=GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//            .requestIdToken(getString(R.string.default_web_client_id))
-//            .requestEmail()
-//            .build()
-//        googleSignInClient= GoogleSignIn.getClient(this,gso)
 
 
 
@@ -94,9 +84,6 @@ class UserLoginActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-//    private fun setupViewModel() {
-//        viewModel = UserViewModel()
-//    }
 
     private fun setupLoginClick() {
         binding.loginBtn.setOnClickListener {
@@ -135,11 +122,7 @@ class UserLoginActivity : AppCompatActivity() {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-//    private fun setupGoogleSignInClick() {
-//        binding.btnGoogle.setOnClickListener {
-//            signInWithGoogle()
-//        }
-//    }
+
 private fun setupGoogleSignInClick() {
     binding.btnGoogle.setOnClickListener {
         oneTapClient.beginSignIn(signInRequest)

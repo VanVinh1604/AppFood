@@ -1,13 +1,11 @@
 package com.example.foodapp.Repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.foodapp.Domain.OrderDetails
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 class OrdersRepository {
@@ -38,6 +36,31 @@ class OrdersRepository {
             })
 
         return orderListLiveData
+    }
+
+    fun hasUnfinishedOrders(callback: (Boolean) -> Unit) {
+        val uid = auth.currentUser?.uid ?: return callback(false)
+
+        database.child("Orders").child(uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var hasPending = false
+                    for (orderSnap in snapshot.children) {
+                        val order = orderSnap.getValue(OrderDetails::class.java)
+                        val status = order?.deliveryStatus?.trim()?.lowercase(Locale.getDefault()) ?: ""
+                        Log.d("CheckOrderStatus", "status = $status")
+                        if (status == "in_progress" || status == "shipping" || status == "unconfirmed") {
+                            hasPending = true
+                            break
+                        }
+                    }
+                    callback(hasPending)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    callback(false)
+                }
+            })
     }
 
 }

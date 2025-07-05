@@ -28,20 +28,29 @@
                 android:layout_marginTop="48dp"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/searchView"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/searchBtn"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:background="@drawable/white_bg"
-                    android:drawableStart="@drawable/search_icon"
-                    android:drawablePadding="8dp"
-                    android:ems="10"
-                    android:hint="@string/search_anything"
-                    android:inputType="text"
-                    android:padding="8dp"
-                    android:textColor="@color/darkBrown"
-                    android:textColorHint="@color/darkBrown" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/search_icon"
+                        android:tint="@color/darkBrown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tìm kiếm sản phẩm..."
+                        android:textColor="@color/darkBrown"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/imageView2"

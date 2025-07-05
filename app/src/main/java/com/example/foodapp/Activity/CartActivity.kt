@@ -9,8 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.foodapp.ViewModel.MainViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodapp.Adapter.CartAdapter
 import com.example.foodapp.Domain.ItemsModel
@@ -21,10 +20,13 @@ import com.example.foodapp.databinding.ViewholderCartBinding
 import com.example.project1762.Helper.ManagmentCart
 import com.uilover.project195.Helper.ChangeNumberItemsListener
 import com.example.foodapp.utils.dp
+import com.example.foodapp.Repository.OrdersRepository
+
 
 class CartActivity : AppCompatActivity() {
     lateinit var binding: ActivityCartBinding
     lateinit var managmentCart: ManagmentCart
+    private val viewModel = MainViewModel()
     private var tax: Double = 0.0
     private var currentCartItems: ArrayList<ItemsModel> = arrayListOf()
 
@@ -84,52 +86,71 @@ class CartActivity : AppCompatActivity() {
 
     private fun setupCheckoutButton() {
         binding.CheckoutBtn.setOnClickListener {
-            val cart = ManagmentCart(this)
-            cart.getListCartInFirebase(object : CartItemsCallback {
-                override fun onCartItemsLoaded(items: ArrayList<ItemsModel>) {
-
-                    if (items.isEmpty()) {
-                        Toast.makeText(this@CartActivity, "Hiện tại chưa có sản phẩm trong giỏ hàng", Toast.LENGTH_SHORT).show()
-                        return
+            // Kiểm tra đơn hàng chưa hoàn thành
+            OrdersRepository().hasUnfinishedOrders { hasUnfinished ->
+                if (hasUnfinished) {
+                    runOnUiThread {
+                        Toast.makeText(
+                            this@CartActivity,
+                            "Bạn đang có đơn hàng chưa được xác nhận. Vui lòng chờ hoàn thành trước khi đặt tiếp.",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-
-                    var total = 0.0
-                    val drinkNames = mutableListOf<String>()
-                    val drinkImages = mutableListOf<String>()
-                    val drinkPrices = mutableListOf<String>()
-                    val drinkQuantities = mutableListOf<Int>()
-                    val drinkSizesList = mutableListOf<String>()
-
-                    for (item in items) {
-                        total += (item.drinkPrice ?: 0.0) * item.numberInCart
-                        drinkNames.add(item.drinkName ?: "")
-                        drinkImages.add(item.drinkImage ?: "")
-                        drinkPrices.add((item.drinkPrice ?: 0.0).toString())
-                        drinkQuantities.add(item.numberInCart)
-                        drinkSizesList.add(item.size ?: "M")
-                    }
-
-                    val intent = Intent(this@CartActivity, PaymentActivity::class.java)
-                    intent.putExtra("totalPrice", total.toString())
-                    intent.putStringArrayListExtra("drinkNames", ArrayList(drinkNames))
-                    intent.putStringArrayListExtra("drinkImages", ArrayList(drinkImages))
-                    intent.putStringArrayListExtra("drinkPrices", ArrayList(drinkPrices))
-                    intent.putIntegerArrayListExtra("drinkQuantities", ArrayList(drinkQuantities))
-                    intent.putStringArrayListExtra("drinkSizes", ArrayList(drinkSizesList))
-
-                    startActivity(intent)
+                    return@hasUnfinishedOrders
                 }
 
-                override fun onError(error: String) {
-                    Toast.makeText(this@CartActivity, "Lỗi: $error", Toast.LENGTH_SHORT).show()
-                }
-            })
+                // Nếu không có đơn hàng đang xử lý thì cho tiếp tục
+                val cart = ManagmentCart(this)
+                cart.getListCartInFirebase(object : CartItemsCallback {
+                    override fun onCartItemsLoaded(items: ArrayList<ItemsModel>) {
+                        if (items.isEmpty()) {
+                            Toast.makeText(
+                                this@CartActivity,
+                                "Hiện tại chưa có sản phẩm trong giỏ hàng",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return
+                        }
+
+                        var total = 0.0
+                        val drinkNames = mutableListOf<String>()
+                        val drinkImages = mutableListOf<String>()
+                        val drinkPrices = mutableListOf<String>()
+                        val drinkQuantities = mutableListOf<Int>()
+                        val drinkSizesList = mutableListOf<String>()
+
+                        for (item in items) {
+                            total += (item.drinkPrice ?: 0.0) * item.numberInCart
+                            drinkNames.add(item.drinkName ?: "")
+                            drinkImages.add(item.drinkImage ?: "")
+                            drinkPrices.add((item.drinkPrice ?: 0.0).toString())
+                            drinkQuantities.add(item.numberInCart)
+                            drinkSizesList.add(item.size ?: "M")
+                        }
+
+                        val intent = Intent(this@CartActivity, PaymentActivity::class.java)
+                        intent.putExtra("totalPrice", total.toString())
+                        intent.putStringArrayListExtra("drinkNames", ArrayList(drinkNames))
+                        intent.putStringArrayListExtra("drinkImages", ArrayList(drinkImages))
+                        intent.putStringArrayListExtra("drinkPrices", ArrayList(drinkPrices))
+                        intent.putIntegerArrayListExtra("drinkQuantities", ArrayList(drinkQuantities))
+                        intent.putStringArrayListExtra("drinkSizes", ArrayList(drinkSizesList))
+
+                        startActivity(intent)
+                    }
+
+                    override fun onError(error: String) {
+                        Toast.makeText(this@CartActivity, "Lỗi: $error", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
         }
     }
 
+
     private fun calculateCartFromList(items: List<ItemsModel>) {
-        val percentTax = 0.02
-        val delivery = 15
+        val percentTax = 0.00
+        val delivery = 0
         var fee = 0.0
 
         for (item in items) {

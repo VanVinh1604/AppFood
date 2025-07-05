@@ -75,27 +75,32 @@ class MainRepository {
     }
 
 
-    fun loadItemCategory(categoryId:String):LiveData<MutableList<ItemsModel>>{
-        val itemLiveData=MutableLiveData<MutableList<ItemsModel>>()
-        val ref=firebaseDatabase.getReference("Popular")
-        val query:Query=ref.orderByChild("categoryId").equalTo(categoryId)
+    fun loadItemCategory(categoryId: String): LiveData<MutableList<ItemsModel>> {
+        val itemLiveData = MutableLiveData<MutableList<ItemsModel>>()
+        val ref = firebaseDatabase.getReference("Popular")
 
-        query.addListenerForSingleValueEvent(object:ValueEventListener{
+        val query: Query = if (categoryId == "all" || categoryId.isEmpty()) {
+            ref // Lấy toàn bộ item
+        } else {
+            ref.orderByChild("categoryId").equalTo(categoryId)
+        }
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val list= mutableListOf<ItemsModel>()
-                for (childSnapshot in snapshot.children){
-                    val item=childSnapshot.getValue(ItemsModel::class.java)
+                val list = mutableListOf<ItemsModel>()
+                for (childSnapshot in snapshot.children) {
+                    val item = childSnapshot.getValue(ItemsModel::class.java)
                     item?.let { list.add(it) }
                 }
-                itemLiveData.value=list
+                itemLiveData.value = list
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                itemLiveData.value = mutableListOf() // tránh lỗi app crash
             }
-
         })
-        return itemLiveData
 
+        return itemLiveData
     }
+
 }

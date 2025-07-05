@@ -96,5 +96,11 @@ class MainViewModel:ViewModel() {
         voucherRepo.markVoucherUsed(code, userId)
     }
 
+    fun checkUnfinishedOrders(callback: (Boolean) -> Unit) {
+        val repo = OrdersRepository()
+        repo.hasUnfinishedOrders(callback)
+    }
+
+
 
 }
