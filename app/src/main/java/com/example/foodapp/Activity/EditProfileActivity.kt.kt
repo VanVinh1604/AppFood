@@ -49,7 +49,7 @@ class EditProfileActivity : AppCompatActivity() {
                         binding.editEmail.setText(snapshot.child("emailCustomer").value.toString())
                         binding.editPhone.setText(snapshot.child("phoneNumberCustomer").value.toString())
                         binding.editAddress.setText(snapshot.child("addressCustomer").value.toString())
-                        binding.editPassword.setText(snapshot.child("passwordCustomer").value.toString())
+//                        binding.editPassword.setText(snapshot.child("passwordCustomer").value.toString())
                         val avatarUrl = snapshot.child("avatarUrl").value?.toString()
                         if (!avatarUrl.isNullOrEmpty()) {
                             Glide.with(this@EditProfileActivity).load(avatarUrl).into(binding.avatarImage)
@@ -68,7 +68,7 @@ class EditProfileActivity : AppCompatActivity() {
             val email = binding.editEmail.text.toString()
             val phone = binding.editPhone.text.toString()
             val address = binding.editAddress.text.toString()
-            val password = binding.editPassword.text.toString()
+//            val password = binding.editPassword.text.toString()
 
             currentUserId?.let { uid ->
 
@@ -77,7 +77,7 @@ class EditProfileActivity : AppCompatActivity() {
                     "emailCustomer" to email,
                     "phoneNumberCustomer" to phone,
                     "addressCustomer" to address,
-                    "passwordCustomer" to password
+//                    "passwordCustomer" to password
                 )
 
                 database.child(uid).updateChildren(updatedUser)
@@ -92,7 +92,7 @@ class EditProfileActivity : AppCompatActivity() {
                 if (email != user?.email) {
                     user?.updateEmail(email)
                 }
-                user?.updatePassword(password)
+//                user?.updatePassword(password)
             }
         }
 

@@ -9,6 +9,9 @@ import com.bumptech.glide.Glide
 import com.example.foodapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.example.foodapp.Activity.ChangePasswordActivity
+import com.example.foodapp.FloatingChatService
+
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -24,6 +27,8 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var orderNotification: LinearLayout
     private lateinit var languageChange: LinearLayout
     private lateinit var aboutApp: LinearLayout
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,13 +67,11 @@ class ProfileActivity : AppCompatActivity() {
                 val avatarUrl = snapshot.child("avatarUrl").getValue(String::class.java)
 
                 val dateTextView = findViewById<TextView>(R.id.date_time_text)
-
                 val currentTime = java.util.Calendar.getInstance().time
                 val sdf = java.text.SimpleDateFormat("EEEE, dd/MM/yyyy - HH:mm", java.util.Locale.getDefault())
                 val formattedDate = sdf.format(currentTime)
 
                 dateTextView.text = "Today is $formattedDate"
-
 
                 profileName.text = name ?: "No name"
                 profileUsername.text = email ?: ""
@@ -90,15 +93,20 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         logoutButton.setOnClickListener {
+            // 🛑 Dừng bong bóng chat
+            stopService(Intent(this, FloatingChatService::class.java))
+
             val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
             sharedPref.edit().remove("isLoggedIn").apply()
             auth.signOut()
+
             Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, UserLoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
         }
+
 
         changeInfo.setOnClickListener {
             startActivity(Intent(this, EditProfileActivity::class.java))
@@ -108,8 +116,9 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, NotificationActivity::class.java))
         }
 
+        // 👉 Thay đổi mật khẩu
         languageChange.setOnClickListener {
-            Toast.makeText(this, "Language Settings clicked", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, ChangePasswordActivity::class.java))
         }
 
         aboutApp.setOnClickListener {

@@ -39,6 +39,13 @@ class MainActivity : AppCompatActivity() {
 //    private var categoryList = listOf<CategoryModel>()  // Lưu data để search
     private var popularList = listOf<ItemsModel>()    // Lưu data để search
 
+    override fun onBackPressed() {
+        stopService(Intent(this, FloatingChatService::class.java))
+        super.onBackPressed()
+    }
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

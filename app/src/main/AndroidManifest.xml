@@ -15,61 +15,91 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FoodApp"
         tools:targetApi="31">
-
+        <activity
+            android:name=".Activity.ChangePasswordActivity"
+            android:exported="false" />
         <!-- Activity từ nhánh main -->
-        <activity android:name=".Activity.OrderDetailsActivity" android:exported="false" />
-        <activity android:name=".Activity.OrdersActivity" android:exported="false" />
-        <activity android:name=".Activity.PaymentActivity" android:exported="true" android:launchMode="singleTop">
+        <activity
+            android:name=".Activity.OrderDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.OrdersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.PaymentActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="myapp"
+
+                <data
                     android:host="paypal"
-                    android:path="/success" />
+                    android:path="/success"
+                    android:scheme="myapp" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="myapp"
+
+                <data
                     android:host="paypal"
-                    android:path="/cancel" />
+                    android:path="/cancel"
+                    android:scheme="myapp" />
             </intent-filter>
-        </activity>
-
-        <!-- Activity từ nhánh Cafe -->
-        <activity android:name=".Activity.FavoritesActivity" android:exported="false" />
-        <activity android:name=".Activity.NotificationActivity" android:exported="false" />
-        <activity android:name=".Activity.AboutActivity" android:exported="false" />
-        <activity android:name=".Activity.EditProfileActivity" android:exported="false" />
-        <activity android:name=".Activity.LanguageActivity" android:exported="false" />
-        <activity android:name=".Activity.ProfileActivity" android:exported="false" />
-
-        <!-- Các Activity dùng chung -->
-        <activity android:name=".Activity.UserSignUpActivity" android:exported="false" />
-        <activity android:name=".Activity.UserLoginActivity" android:exported="false" />
-        <activity android:name=".Activity.CartActivity" android:exported="false"/>
-        <activity android:name=".Activity.ItemsListActivity" android:exported="false" />
-        <activity android:name=".Activity.DetailActivity" android:exported="false" />
-
-        <!-- Splash - Launcher -->
-        <activity android:name=".Activity.SplashActivity" android:exported="true">
+        </activity> <!-- Activity từ nhánh Cafe -->
+        <activity
+            android:name=".Activity.FavoritesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.AboutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.LanguageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ProfileActivity"
+            android:exported="false" /> <!-- Các Activity dùng chung -->
+        <activity
+            android:name=".Activity.UserSignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.UserLoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ItemsListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.DetailActivity"
+            android:exported="false" /> <!-- Splash - Launcher -->
+        <activity
+            android:name=".Activity.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- TÁCH Riêng ChatActivity -->
+        </activity> <!-- TÁCH Riêng ChatActivity -->
         <activity
             android:name=".Activity.ChatActivity"
-            android:exported="false" />
-
-        <!-- Notification activity -->
-        <activity android:name=".NotificationMessages" android:exported="true" />
-
-        <!-- Firebase Messaging -->
+            android:exported="false" /> <!-- Notification activity -->
+        <activity
+            android:name=".NotificationMessages"
+            android:exported="true" /> <!-- Firebase Messaging -->
         <service
             android:name=".fcm.MyFirebaseMessaging"
             android:enabled="true"
@@ -77,16 +107,14 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-        <!-- Floating Chat Service -->
+        </service> <!-- Floating Chat Service -->
         <service
             android:name=".FloatingChatService"
             android:enabled="true"
-            android:exported="false" />
-
-        <!-- Main activity -->
-        <activity android:name=".Activity.MainActivity" android:exported="true" />
-
+            android:exported="false" /> <!-- Main activity -->
+        <activity
+            android:name=".Activity.MainActivity"
+            android:exported="true" />
     </application>
+
 </manifest>
