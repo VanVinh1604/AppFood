@@ -125,18 +125,21 @@ class DetailActivity : AppCompatActivity() {
                 smallBtn.setBackgroundResource(R.drawable.stroke_brown_bg)
                 mediumBtn.setBackgroundResource(0)
                 largeBtn.setBackgroundResource(0)
+                updatePriceBySize()
             }
             mediumBtn.setOnClickListener {
                 selectedSize = "Medium"
                 smallBtn.setBackgroundResource(0)
                 mediumBtn.setBackgroundResource(R.drawable.stroke_brown_bg)
                 largeBtn.setBackgroundResource(0)
+                updatePriceBySize()
             }
             largeBtn.setOnClickListener {
                 selectedSize = "Large"
                 smallBtn.setBackgroundResource(0)
                 mediumBtn.setBackgroundResource(0)
                 largeBtn.setBackgroundResource(R.drawable.stroke_brown_bg)
+                updatePriceBySize()
             }
         }
     }
@@ -157,9 +160,17 @@ class DetailActivity : AppCompatActivity() {
 
             addToCartBtn.setOnClickListener {
                 val number = numberItemTxt.text.toString().toIntOrNull() ?: 1
+                val basePrice = item.drinkPrice ?: 0.0
+                val finalPrice = when (selectedSize) {
+                    "Medium" -> basePrice * 1.1
+                    "Large" -> basePrice * 1.2
+                    else -> basePrice
+                }
+
                 val itemToCart = item.copy(
                     numberInCart = number,
-                    size = selectedSize
+                    size = selectedSize,
+                    drinkPrice = finalPrice
                 )
                 managmentCart.insertItemToCart(itemToCart)
             }
@@ -353,4 +364,14 @@ class DetailActivity : AppCompatActivity() {
                 binding.ratingTxt.text = "N/A"
             }
     }
+    private fun updatePriceBySize() {
+        val basePrice = item.drinkPrice ?: 0.0
+        val finalPrice = when (selectedSize) {
+            "Medium" -> basePrice * 1.1
+            "Large" -> basePrice * 1.2
+            else -> basePrice
+        }
+        binding.priceTxt.text = "$${String.format("%.2f", finalPrice)}"
+    }
+
 }
