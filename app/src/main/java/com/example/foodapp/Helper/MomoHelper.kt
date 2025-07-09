@@ -8,6 +8,7 @@ import okhttp3.*
 import android.util.Base64
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
@@ -30,6 +31,11 @@ object MomoHelper {
         customerNote: String,
         voucherCode: String?,           // ✅ thêm
         discountAmount: Double?,
+        drinkNames: ArrayList<String>,
+        drinkImages: ArrayList<String>,
+        drinkPrices: ArrayList<String>,
+        drinkQuantities: ArrayList<Int>,
+        drinkSizes: ArrayList<String>,
         callback: (String?) -> Unit
     ) {
         val orderId = System.currentTimeMillis().toString()
@@ -44,6 +50,12 @@ object MomoHelper {
             put("totalPrice", amount)
             put("voucherCode", voucherCode ?: "")
             put("discountAmount", discountAmount ?: 0.0)
+
+            put("drinkNames", JSONArray(drinkNames))
+            put("drinkImages", JSONArray(drinkImages))
+            put("drinkPrices", JSONArray(drinkPrices))
+            put("drinkQuantities", JSONArray(drinkQuantities))
+            put("drinkSizes", JSONArray(drinkSizes))
         }
         val extraData = Base64.encodeToString(infoJson.toString().toByteArray(), Base64.NO_WRAP)
 

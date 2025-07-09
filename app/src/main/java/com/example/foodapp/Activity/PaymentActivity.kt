@@ -38,6 +38,12 @@ class PaymentActivity : AppCompatActivity() {
     private var savedNote: String = ""
     private val handler = Handler(Looper.getMainLooper())
     private var paymentRunnable: Runnable? = null
+    private var drinkNames: ArrayList<String> = arrayListOf()
+    private var drinkImages: ArrayList<String> = arrayListOf()
+    private var drinkPrices: ArrayList<String> = arrayListOf()
+    private var drinkQuantities: ArrayList<Int> = arrayListOf()
+    private var drinkSizes: ArrayList<String> = arrayListOf()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +64,12 @@ class PaymentActivity : AppCompatActivity() {
         binding.backButton.setOnClickListener { finish() }
         initVoucherApply()
         observePaymentData()
+
+        drinkNames = intent.getStringArrayListExtra("drinkNames") ?: arrayListOf()
+        drinkImages = intent.getStringArrayListExtra("drinkImages") ?: arrayListOf()
+        drinkPrices = intent.getStringArrayListExtra("drinkPrices") ?: arrayListOf()
+        drinkQuantities = intent.getIntegerArrayListExtra("drinkQuantities") ?: arrayListOf()
+        drinkSizes = intent.getStringArrayListExtra("drinkSizes") ?: arrayListOf()
 
         binding.ocdBtn.setOnClickListener {
             // 💾 Lưu dữ liệu trước khi thanh toán
@@ -132,6 +144,11 @@ class PaymentActivity : AppCompatActivity() {
         outState.putString("finalTotalPrice", finalTotalPrice)
         outState.putBoolean("isMomoApproved", isMomoApproved)
         outState.putBoolean("isPaypalApproved", isPaypalApproved)
+        outState.putStringArrayList("drinkNames", drinkNames)
+        outState.putStringArrayList("drinkImages", drinkImages)
+        outState.putStringArrayList("drinkPrices", drinkPrices)
+        outState.putIntegerArrayList("drinkQuantities", drinkQuantities)
+        outState.putStringArrayList("drinkSizes", drinkSizes)
     }
 
     // 📋 Khôi phục trạng thái
@@ -145,6 +162,11 @@ class PaymentActivity : AppCompatActivity() {
         finalTotalPrice = savedInstanceState.getString("finalTotalPrice")
         isMomoApproved = savedInstanceState.getBoolean("isMomoApproved", false)
         isPaypalApproved = savedInstanceState.getBoolean("isPaypalApproved", false)
+        drinkNames = savedInstanceState.getStringArrayList("drinkNames") ?: arrayListOf()
+        drinkImages = savedInstanceState.getStringArrayList("drinkImages") ?: arrayListOf()
+        drinkPrices = savedInstanceState.getStringArrayList("drinkPrices") ?: arrayListOf()
+        drinkQuantities = savedInstanceState.getIntegerArrayList("drinkQuantities") ?: arrayListOf()
+        drinkSizes = savedInstanceState.getStringArrayList("drinkSizes") ?: arrayListOf()
 
         // Khôi phục UI
         restoreData()
@@ -212,6 +234,34 @@ class PaymentActivity : AppCompatActivity() {
                                         appliedVoucherCode = json.optString("voucherCode", null)
                                         discountAmount = json.optDouble("discountAmount", 0.0)
 
+                                        val drinkNamesArray = json.optJSONArray("drinkNames")
+                                        val drinkImagesArray = json.optJSONArray("drinkImages")
+                                        val drinkPricesArray = json.optJSONArray("drinkPrices")
+                                        val drinkQuantitiesArray = json.optJSONArray("drinkQuantities")
+                                        val drinkSizesArray = json.optJSONArray("drinkSizes")
+
+                                        drinkNames.clear()
+                                        drinkImages.clear()
+                                        drinkPrices.clear()
+                                        drinkQuantities.clear()
+                                        drinkSizes.clear()
+
+                                        for (i in 0 until (drinkNamesArray?.length() ?: 0)) {
+                                            drinkNames.add(drinkNamesArray?.optString(i) ?: "")
+                                        }
+                                        for (i in 0 until (drinkImagesArray?.length() ?: 0)) {
+                                            drinkImages.add(drinkImagesArray?.optString(i) ?: "")
+                                        }
+                                        for (i in 0 until (drinkPricesArray?.length() ?: 0)) {
+                                            drinkPrices.add(drinkPricesArray?.optString(i) ?: "")
+                                        }
+                                        for (i in 0 until (drinkQuantitiesArray?.length() ?: 0)) {
+                                            drinkQuantities.add(drinkQuantitiesArray?.optInt(i) ?: 0)
+                                        }
+                                        for (i in 0 until (drinkSizesArray?.length() ?: 0)) {
+                                            drinkSizes.add(drinkSizesArray?.optString(i) ?: "")
+                                        }
+
                                         restoreData() // cập nhật lại UI
                                     } catch (e: Exception) {
                                         e.printStackTrace()
@@ -258,15 +308,16 @@ class PaymentActivity : AppCompatActivity() {
             phoneNumber = phone,
             note = note,
             totalPrice = finalTotalPrice,
-            drinkNames = intent.getStringArrayListExtra("drinkNames"),
-            drinkImages = intent.getStringArrayListExtra("drinkImages"),
-            drinkPrices = intent.getStringArrayListExtra("drinkPrices"),
-            drinkQuantities = intent.getIntegerArrayListExtra("drinkQuantities"),
-            drinkSizes = intent.getStringArrayListExtra("drinkSizes"),
+            drinkNames = drinkNames,
+            drinkImages = drinkImages,
+            drinkPrices = drinkPrices,
+            drinkQuantities = drinkQuantities,
+            drinkSizes = drinkSizes,
             paymentStatus = paymentMethod,
             currentTime = System.currentTimeMillis(),
             voucherCode = appliedVoucherCode,
-            discountAmount = if (discountAmount > 0.0) "%.2f".format(discountAmount) else null
+            discountAmount = if (discountAmount > 0.0) "%.2f".format(discountAmount) else null,
+            paymentReceived = paymentMethod == "Momo" || paymentMethod == "PayPal"
         )
 
         paymentViewModel.saveOrder(order) { success, savedOrder ->
@@ -353,7 +404,12 @@ class PaymentActivity : AppCompatActivity() {
             customerAddress = savedAddress.ifEmpty { binding.addressInput.text.toString() },
             customerNote = savedNote.ifEmpty { binding.noteInput.text.toString() },
             voucherCode = appliedVoucherCode,                    // ✅ truyền đúng
-            discountAmount = discountAmount                     // ✅ truyền đúng
+            discountAmount = discountAmount,
+            drinkNames = drinkNames,
+            drinkImages = drinkImages,
+            drinkPrices = drinkPrices,
+            drinkQuantities = drinkQuantities,
+            drinkSizes = drinkSizes // ✅ thêm dòng này
         ) { payUrl ->
             runOnUiThread {
                 if (payUrl != null) {
