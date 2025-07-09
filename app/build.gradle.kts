@@ -65,8 +65,6 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.constraintlayout:constraintlayout-core:1.1.1")
 
-
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -95,6 +93,7 @@ dependencies {
     // Mở Chrome Custom Tab
     implementation("androidx.browser:browser:1.8.0")
 
+    implementation("com.github.momo-wallet:mobile-sdk:1.0.7")
     implementation(libs.firebase.storage)
     implementation(libs.firebase.messaging)
     implementation (libs.firebase.database)

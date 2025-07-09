@@ -66,7 +66,7 @@ class PaymentRepository {
         })
     }
 
-    fun saveOrder(order: OrderDetails, onResult: (Boolean) -> Unit) {
+    fun saveOrder(order: OrderDetails, onResult: (Boolean, OrderDetails?) -> Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             val userOrderRef = database.getReference("Orders").child(userId).push()
@@ -74,11 +74,12 @@ class PaymentRepository {
             if (pushKey != null) {
                 order.itemPushKey = pushKey
                 userOrderRef.setValue(order)
-                    .addOnSuccessListener { onResult(true) }
-                    .addOnFailureListener { onResult(false) }
+                    .addOnSuccessListener { onResult(true, order) }
+                    .addOnFailureListener { onResult(false, null) }
             } else {
-                onResult(false)
+                onResult(false, null)
             }
         }
     }
+
 }

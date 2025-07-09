@@ -11,8 +11,5 @@
         android:scaleType="centerCrop"
         android:elevation="8dp"
         android:padding="8dp"
-        android:background="#FFF5E1"
-    android:contentDescription="Chat icon" />
-
-
+        android:contentDescription="Chat icon" />
 </FrameLayout>

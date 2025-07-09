@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         initCategory()
         initPopular()
         initBottomMenu()
+        initFirebaseMessaging()
         initSearchButton()
 
 
@@ -166,33 +167,33 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-//    private fun initFirebaseMessaging() {
-//        // Tạo NotificationChannel cho Android 8+
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val channel = NotificationChannel(
-//                "push_notification_id",
-//                "Push Notification",
-//                NotificationManager.IMPORTANCE_DEFAULT
-//            )
-//            val manager = getSystemService(NotificationManager::class.java)
-//            manager?.createNotificationChannel(channel)
-//        }
-//
-//        // Lấy FCM Token để test gửi từ Firebase Console
-//        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-//            if (!task.isSuccessful) {
-//                Log.w("FCM", "Lấy token thất bại", task.exception)
-//                return@addOnCompleteListener
-//            }
-//
-//            // Token lấy thành công
-//            val token = task.result
-//            Log.d("FCM_TOKEN", "Token: $token")
-//            Toast.makeText(this, "FCM Token đã sẵn sàng", Toast.LENGTH_SHORT).show()
-//
-//            // TODO: Gửi token này lên server nếu muốn
-//        }
-//    }
+    private fun initFirebaseMessaging() {
+        // Tạo NotificationChannel cho Android 8+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "push_notification_id",
+                "Push Notification",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager?.createNotificationChannel(channel)
+        }
+
+        // Lấy FCM Token để test gửi từ Firebase Console
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Lấy token thất bại", task.exception)
+                return@addOnCompleteListener
+            }
+
+            // Token lấy thành công
+            val token = task.result
+            Log.d("FCM_TOKEN", "Token: $token")
+            Toast.makeText(this, "FCM Token đã sẵn sàng", Toast.LENGTH_SHORT).show()
+
+            // TODO: Gửi token này lên server nếu muốn
+        }
+    }
 
 
 }

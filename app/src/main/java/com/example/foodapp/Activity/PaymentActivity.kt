@@ -1,5 +1,6 @@
 package com.example.foodapp.Activity
 
+import PaymentViewModel
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
@@ -11,37 +12,57 @@ import com.example.foodapp.R
 import com.example.foodapp.ViewModel.MainViewModel
 import com.example.foodapp.databinding.ActivityPaymentBinding
 import com.example.project1762.Helper.ManagmentCart
+import com.example.project1762.Helper.MomoHelper
 import com.example.project1762.Helper.PaypalHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import android.os.Handler
+import android.os.Looper
+import org.json.JSONObject
+
 
 class PaymentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPaymentBinding
     private val paymentViewModel: MainViewModel by viewModels()
     private var isPaypalApproved = false
+    private var isMomoApproved = false
     private var appliedVoucherCode: String? = null
     private var discountAmount: Double = 0.0
     private var finalTotalPrice: String? = null
+    private val stateViewModel: PaymentViewModel by viewModels()
+
+    // 🔧 Lưu trữ dữ liệu để tránh mất khi Activity recreate
+    private var savedName: String = ""
+    private var savedAddress: String = ""
+    private var savedPhone: String = ""
+    private var savedNote: String = ""
+    private val handler = Handler(Looper.getMainLooper())
+    private var paymentRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPaymentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Hiển thị tổng tiền được truyền từ CartActivity
+        // Khôi phục dữ liệu nếu có
+        if (savedInstanceState != null) {
+            restoreInstanceState(savedInstanceState)
+        }
+
+
         val originalPrice = intent.getStringExtra("totalPrice") ?: "0.0"
         finalTotalPrice = originalPrice
         binding.totalInput.setText("$${originalPrice}")
-        // Lắng nghe dữ liệu người dùng từ ViewModel
-        observeUserInfo()
 
-        // Nút quay lại
-        binding.backButton.setOnClickListener {
-            finish()
-        }
+        observeUserInfo()
+        binding.backButton.setOnClickListener { finish() }
         initVoucherApply()
+        observePaymentData()
 
         binding.ocdBtn.setOnClickListener {
+            // 💾 Lưu dữ liệu trước khi thanh toán
+            saveCurrentData()
+
             val method = when (binding.paymentContainer.checkedRadioButtonId) {
                 R.id.radioCOD -> "COD"
                 R.id.radioMomo -> "Momo"
@@ -54,32 +75,160 @@ class PaymentActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if (method == "PayPal") {
-                val amount = finalTotalPrice ?: intent.getStringExtra("totalPrice") ?: "0.00"
-                startPaypalPayment(amount)
-            } else {
-                placeOrder(method)
+            val amount = finalTotalPrice ?: intent.getStringExtra("totalPrice") ?: "0.00"
+
+            when (method) {
+                "PayPal" -> startPaypalPayment(amount)
+                "Momo" -> startMomoPayment(amount)
+                else -> placeOrder(method)
             }
         }
-
     }
+
+    // 💾 Lưu dữ liệu hiện tại
+    private fun saveCurrentData() {
+        val name = binding.nameInput.text.toString().trim()
+        val address = binding.addressInput.text.toString().trim()
+        val phone = binding.phoneInput.text.toString().trim()
+        val note = binding.noteInput.text.toString().trim()
+
+        savedName = name
+        savedAddress = address
+        savedPhone = phone
+        savedNote = note
+
+        stateViewModel.savePaymentData(
+            name = name,
+            address = address,
+            phone = phone,
+            note = note,
+            totalPrice = finalTotalPrice,
+            voucherCode = appliedVoucherCode,
+            discountAmount = discountAmount,
+            isPaypalApproved = isPaypalApproved,
+            isMomoApproved = isMomoApproved
+        )
+    }
+
+
+    // 📋 Khôi phục dữ liệu
+    private fun restoreData() {
+        if (savedName.isNotEmpty()) binding.nameInput.setText(savedName)
+        if (savedAddress.isNotEmpty()) binding.addressInput.setText(savedAddress)
+        if (savedPhone.isNotEmpty()) binding.phoneInput.setText(savedPhone)
+        if (savedNote.isNotEmpty()) binding.noteInput.setText(savedNote)
+    }
+
+    // 💾 Lưu trạng thái khi Activity bị destroy
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        saveCurrentData()
+        outState.putString("savedName", savedName)
+        outState.putString("savedAddress", savedAddress)
+        outState.putString("savedPhone", savedPhone)
+        outState.putString("savedNote", savedNote)
+        outState.putString("appliedVoucherCode", appliedVoucherCode)
+        outState.putDouble("discountAmount", discountAmount)
+        outState.putString("finalTotalPrice", finalTotalPrice)
+        outState.putBoolean("isMomoApproved", isMomoApproved)
+        outState.putBoolean("isPaypalApproved", isPaypalApproved)
+    }
+
+    // 📋 Khôi phục trạng thái
+    private fun restoreInstanceState(savedInstanceState: Bundle) {
+        savedName = savedInstanceState.getString("savedName", "")
+        savedAddress = savedInstanceState.getString("savedAddress", "")
+        savedPhone = savedInstanceState.getString("savedPhone", "")
+        savedNote = savedInstanceState.getString("savedNote", "")
+        appliedVoucherCode = savedInstanceState.getString("appliedVoucherCode")
+        discountAmount = savedInstanceState.getDouble("discountAmount", 0.0)
+        finalTotalPrice = savedInstanceState.getString("finalTotalPrice")
+        isMomoApproved = savedInstanceState.getBoolean("isMomoApproved", false)
+        isPaypalApproved = savedInstanceState.getBoolean("isPaypalApproved", false)
+
+        // Khôi phục UI
+        restoreData()
+    }
+
     override fun onResume() {
         super.onResume()
-        handlePaypalResult(intent)
+        restoreData() // Khôi phục dữ liệu khi quay lại
+        handlePaymentResult(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handlePaypalResult(intent)
+        setIntent(intent) // ⚠️ Quan trọng: cập nhật intent mới
+        handlePaymentResult(intent)
     }
 
-    private fun observeUserInfo() {
-        paymentViewModel.getUserInfo().observe(this) { user ->
-            if (user != null) {
-                // Nếu người dùng đã có thông tin thì tự động điền
-                user.nameCustomer?.let { binding.nameInput.setText(it) }
-                user.addressCustomer?.let { binding.addressInput.setText(it) }
-                user.phoneNumberCustomer?.let { binding.phoneInput.setText(it) }
+    override fun onDestroy() {
+        super.onDestroy()
+        // 🧹 Dọn dẹp Handler để tránh memory leak
+        paymentRunnable?.let { handler.removeCallbacks(it) }
+    }
+
+    private fun handlePaymentResult(intent: Intent?) {
+        val uri = intent?.data ?: return
+
+        if (uri.scheme == "myapp") {
+            when (uri.host) {
+                "paypal" -> {
+                    when (uri.path) {
+                        "/success" -> {
+                            if (!isPaypalApproved) {
+                                isPaypalApproved = true
+                                Toast.makeText(this, "Thanh toán PayPal thành công", Toast.LENGTH_SHORT).show()
+                                placeOrder("PayPal")
+                            }
+                        }
+                        "/cancel" -> {
+                            Toast.makeText(this, "Bạn đã huỷ thanh toán PayPal", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                "momo" -> {
+                    when (uri.path) {
+                        "/success" -> {
+                            if (!isMomoApproved) {
+                                isMomoApproved = true
+                                Toast.makeText(this, "Thanh toán MoMo thành công!", Toast.LENGTH_SHORT).show()
+
+                                // ✅ GIẢI MÃ extraData từ URL
+                                val extraDataBase64 = uri.getQueryParameter("extraData")
+                                extraDataBase64?.let {
+                                    try {
+                                        val decodedBytes = android.util.Base64.decode(it, android.util.Base64.NO_WRAP)
+                                        val json = JSONObject(String(decodedBytes))
+
+                                        savedName = json.optString("name", savedName)
+                                        savedPhone = json.optString("phone", savedPhone)
+                                        savedAddress = json.optString("address", savedAddress)
+                                        savedNote = json.optString("note", savedNote)
+                                        finalTotalPrice = json.optString("totalPrice", finalTotalPrice)
+
+                                        // 🔧 Phần còn thiếu cần thêm:
+                                        appliedVoucherCode = json.optString("voucherCode", null)
+                                        discountAmount = json.optDouble("discountAmount", 0.0)
+
+                                        restoreData() // cập nhật lại UI
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+
+                                // 🔄 Đợi 1 chút để dữ liệu trên UI load lại rồi mới gọi placeOrder
+                                paymentRunnable = Runnable {
+                                    if (!isFinishing && !isDestroyed) {
+                                        placeOrder("Momo")
+                                    }
+                                }
+                                handler.postDelayed(paymentRunnable!!, 2000)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -91,9 +240,11 @@ class PaymentActivity : AppCompatActivity() {
             return
         }
 
-        val name = binding.nameInput.text.toString().trim()
-        val address = binding.addressInput.text.toString().trim()
-        val phone = binding.phoneInput.text.toString().trim()
+        // 🔧 Sử dụng dữ liệu đã lưu thay vì đọc từ UI
+        val name = if (savedName.isNotEmpty()) savedName else binding.nameInput.text.toString().trim()
+        val address = if (savedAddress.isNotEmpty()) savedAddress else binding.addressInput.text.toString().trim()
+        val phone = if (savedPhone.isNotEmpty()) savedPhone else binding.phoneInput.text.toString().trim()
+        val note = if (savedNote.isNotEmpty()) savedNote else binding.noteInput.text.toString().trim()
 
         if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin cá nhân", Toast.LENGTH_SHORT).show()
@@ -105,7 +256,7 @@ class PaymentActivity : AppCompatActivity() {
             customerName = name,
             address = address,
             phoneNumber = phone,
-            note = binding.noteInput.text.toString(),
+            note = note,
             totalPrice = finalTotalPrice,
             drinkNames = intent.getStringArrayListExtra("drinkNames"),
             drinkImages = intent.getStringArrayListExtra("drinkImages"),
@@ -114,48 +265,120 @@ class PaymentActivity : AppCompatActivity() {
             drinkSizes = intent.getStringArrayListExtra("drinkSizes"),
             paymentStatus = paymentMethod,
             currentTime = System.currentTimeMillis(),
-
             voucherCode = appliedVoucherCode,
             discountAmount = if (discountAmount > 0.0) "%.2f".format(discountAmount) else null
         )
 
-        paymentViewModel.saveOrder(order) { success ->
-            if (success)
-            {
+        paymentViewModel.saveOrder(order) { success, savedOrder ->
+            if (success && savedOrder != null) {
                 appliedVoucherCode?.let { code ->
                     paymentViewModel.decreaseVoucherUsage(code)
                     paymentViewModel.markVoucherUsed(code, uid)
                 }
+
                 ManagmentCart(this).clearCart()
                 Toast.makeText(this, "Đặt hàng thành công!", Toast.LENGTH_SHORT).show()
 
-                val intent = Intent(this, OrderDetailsActivity::class.java)
-                intent.putExtra("order", order)
-                startActivity(intent)
-                finish()
+                // Quay lại CartActivity trước, và xóa hết stack
+                val cartIntent = Intent(this, CartActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(cartIntent)
+
+// Sau đó mở OrderDetailsActivity (trên Cart)
+                val orderIntent = Intent(this, OrderDetailsActivity::class.java).apply {
+                    putExtra("order", savedOrder)
+                }
+                startActivity(orderIntent)
+                stateViewModel.savePaymentData(
+                    name = "",
+                    address = "",
+                    phone = "",
+                    note = "",
+                    totalPrice = null,
+                    voucherCode = null,
+                    discountAmount = 0.0,
+                    isPaypalApproved = false,
+                    isMomoApproved = false
+                )
             } else {
                 Toast.makeText(this, "Đặt hàng thất bại!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    //Payment Paypal
-    private fun handlePaypalResult(intent: Intent?) {
-        val uri = intent?.data ?: return
-
-        if (uri.scheme == "myapp" && uri.host == "paypal") {
-            when (uri.path) {
-                "/success" -> {
-                    if (!isPaypalApproved) {
-                        isPaypalApproved = true
-                        Toast.makeText(this, "Thanh toán PayPal thành công", Toast.LENGTH_SHORT).show()
-                        placeOrder("PayPal")
+    // Các hàm khác giữ nguyên...
+    private fun observeUserInfo() {
+        paymentViewModel.getUserInfo().observe(this) { user ->
+            if (user != null) {
+                user.nameCustomer?.let {
+                    if (savedName.isEmpty()) {
+                        binding.nameInput.setText(it)
+                        savedName = it
                     }
                 }
-
-                "/cancel" -> {
-                    Toast.makeText(this, "Bạn đã huỷ thanh toán PayPal", Toast.LENGTH_SHORT).show()
+                user.addressCustomer?.let {
+                    if (savedAddress.isEmpty()) {
+                        binding.addressInput.setText(it)
+                        savedAddress = it
+                    }
                 }
+                user.phoneNumberCustomer?.let {
+                    if (savedPhone.isEmpty()) {
+                        binding.phoneInput.setText(it)
+                        savedPhone = it
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startMomoPayment(amount: String) {
+        val cleanedAmount = amount.replace("$", "").trim().toDoubleOrNull() ?: 0.0
+
+        if (cleanedAmount <= 0.0) {
+            Toast.makeText(this, "Số tiền không hợp lệ để thanh toán MoMo", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val user = FirebaseAuth.getInstance().currentUser
+        val email = user?.email ?: "noemail@example.com"
+
+        MomoHelper.createMomoOrder(
+            context = this,
+            amount = amount,
+            customerName = savedName.ifEmpty { binding.nameInput.text.toString() },
+            customerEmail = email,
+            customerPhone = savedPhone.ifEmpty { binding.phoneInput.text.toString() },
+            customerAddress = savedAddress.ifEmpty { binding.addressInput.text.toString() },
+            customerNote = savedNote.ifEmpty { binding.noteInput.text.toString() },
+            voucherCode = appliedVoucherCode,                    // ✅ truyền đúng
+            discountAmount = discountAmount                     // ✅ truyền đúng
+        ) { payUrl ->
+            runOnUiThread {
+                if (payUrl != null) {
+                    MomoHelper.openMomoCheckout(this, payUrl)
+                } else {
+                    Toast.makeText(this, "Tạo đơn MoMo thất bại", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+    private fun observePaymentData() {
+        stateViewModel.paymentData.observe(this) { data ->
+            if (data.name.isNotEmpty()) binding.nameInput.setText(data.name)
+            if (data.address.isNotEmpty()) binding.addressInput.setText(data.address)
+            if (data.phone.isNotEmpty()) binding.phoneInput.setText(data.phone)
+            if (data.note.isNotEmpty()) binding.noteInput.setText(data.note)
+
+            appliedVoucherCode = data.voucherCode
+            discountAmount = data.discountAmount
+            finalTotalPrice = data.totalPrice
+            isPaypalApproved = data.isPaypalApproved
+            isMomoApproved = data.isMomoApproved
+
+            data.totalPrice?.let {
+                binding.totalInput.setText("$$it")
             }
         }
     }
@@ -205,7 +428,7 @@ class PaymentActivity : AppCompatActivity() {
                     finalTotalPrice = "%.2f".format(finalTotal)
 
                     binding.totalInput.setText("$$finalTotalPrice")
-                    binding.buttonApply.isEnabled = false // tránh áp lại mã
+                    binding.buttonApply.isEnabled = false
 
                     Toast.makeText(
                         this,
@@ -220,5 +443,4 @@ class PaymentActivity : AppCompatActivity() {
             }
         }
     }
-
 }

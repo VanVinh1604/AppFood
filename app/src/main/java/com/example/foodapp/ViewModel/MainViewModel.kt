@@ -48,9 +48,10 @@ class MainViewModel:ViewModel() {
         return paymentRepository.fetchUserInfo()
     }
 
-    fun saveOrder(order: OrderDetails, onResult: (Boolean) -> Unit) {
-        paymentRepository.saveOrder(order, onResult)
+    fun saveOrder(order: OrderDetails, callback: (Boolean, OrderDetails?) -> Unit) {
+        paymentRepository.saveOrder(order, callback)
     }
+
 
     fun getOrderHistory(): LiveData<List<OrderDetails>> {
         return ordersRepository.getOrders()

@@ -67,6 +67,11 @@ class UserLoginActivity : AppCompatActivity() {
 
         checkLoginStatus()
 
+        binding.Txtforgetemail.setOnClickListener {
+            val intent = Intent(this, ForgetEmailActivity::class.java)
+            startActivity(intent)
+        }
+
     }
     private fun checkLoginStatus() {
         val sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
