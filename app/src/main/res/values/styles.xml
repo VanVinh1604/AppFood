@@ -5,4 +5,8 @@
         <item name="cornerSize">50%</item> <!-- Bo góc 50% => hình tròn -->
     </style>
 
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

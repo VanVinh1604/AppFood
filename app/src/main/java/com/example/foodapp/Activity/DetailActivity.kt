@@ -39,6 +39,9 @@ class DetailActivity : AppCompatActivity() {
     private var isFavorite = false
     private lateinit var recommendationAdapter: RecommendationAdapter
     private val recommendationList = mutableListOf<ItemsModel>()
+    private var orderId: String? = null
+    private var itemIndex: Int = -1
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +68,7 @@ class DetailActivity : AppCompatActivity() {
         bundle()
         initSizeList()
         setupFavoriteIcon()
-        setupCommentSection()
+//        setupCommentSection()
         loadComments()
         // Đặt sau cùng, khi item đã có giá trị
         if (::item.isInitialized && item.drinkId != null) {
@@ -249,55 +252,7 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupCommentSection() {
-        binding.commentBtn.setOnClickListener {
-            val commentText = binding.commentTxt.text.toString().trim()
-            val ratingValue = binding.ratingComment.rating
-            val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-            if (userId == null) {
-                Toast.makeText(this, "You must login to post a review.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if (commentText.isEmpty() || ratingValue <= 0f) {
-                Toast.makeText(this, "Please enter review content", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val commentRef = FirebaseDatabase.getInstance().getReference("Comments")
-                .child(item.drinkId!!)
-                .child(userId)
-
-            commentRef.get().addOnSuccessListener { snapshot ->
-                if (snapshot.exists()) {
-                    Toast.makeText(this, "You have already submitted a review for this product.", Toast.LENGTH_SHORT).show()
-                } else {
-                    val comment = CommentModel(
-                        customerID = userId,
-                        comment = commentText,
-                        star = ratingValue,
-                        title = "User Reviews",
-                        createdAt = System.currentTimeMillis()
-                    )
-
-                    commentRef.setValue(comment)
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "Review sent successfully", Toast.LENGTH_SHORT).show()
-                            binding.commentTxt.text.clear()
-                            binding.ratingComment.rating = 0f
-                            commentViewModel.loadComment(item.drinkId ?: "")
-                            loadComments()
-                            updateAverageRatingToItem(item.drinkId ?: "")
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this, "Send failed: ${it.message}", Toast.LENGTH_SHORT).show()
-                        }
-                }
-            }.addOnFailureListener {
-                Toast.makeText(this, "Failed to check previous reviews: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 
     private fun updateAverageRatingToItem(drinkId: String) {
         val commentRef = FirebaseDatabase.getInstance().getReference("Comments").child(drinkId)

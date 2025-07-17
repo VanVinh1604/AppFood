@@ -32,7 +32,7 @@ class OrdersActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var adapter: OrdersAdapter
     private var allOrders: List<OrderDetails> = emptyList()
-//    private var dateFilterLiveData: LiveData<List<OrderDetails>>? = null
+    //    private var dateFilterLiveData: LiveData<List<OrderDetails>>? = null
     private var currentStatusFilter = "new"
     private var selectedDate: String? = null
 
@@ -200,7 +200,7 @@ class OrdersActivity : AppCompatActivity() {
         // FAVORITE
         val favoriteBtn = rootView.findViewById<View>(R.id.favoriteBtn)
         favoriteBtn.setOnClickListener {
-             startActivity(Intent(this, FavoritesActivity::class.java))
+            startActivity(Intent(this, FavoritesActivity::class.java))
             finish()
         }
 
@@ -216,7 +216,7 @@ class OrdersActivity : AppCompatActivity() {
         // PROFILE
         val profileBtn = rootView.findViewById<View>(R.id.profileBtn)
         profileBtn.setOnClickListener {
-             startActivity(Intent(this, ProfileActivity::class.java))
+            startActivity(Intent(this, ProfileActivity::class.java))
             finish()
         }
     }
