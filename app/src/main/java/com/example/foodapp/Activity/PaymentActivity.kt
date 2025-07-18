@@ -18,6 +18,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import android.os.Handler
 import android.os.Looper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.foodapp.Adapter.VoucherAdapter
+import com.example.foodapp.Domain.VouchersModel
 import org.json.JSONObject
 
 
@@ -49,6 +53,21 @@ class PaymentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPaymentBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerVoucher)
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+// Gọi load data từ Firebase
+        paymentViewModel.fetchAllActiveVouchers()
+
+// Observe dữ liệu vouchers
+        paymentViewModel.allVouchers.observe(this) { voucherList ->
+            val adapter = VoucherAdapter(voucherList) { selectedVoucher ->
+                binding.editTextDiscount.setText(selectedVoucher.code)
+                Toast.makeText(this, "Đã chọn mã: ${selectedVoucher.code}", Toast.LENGTH_SHORT).show()
+            }
+            recyclerView.adapter = adapter
+        }
 
         // Khôi phục dữ liệu nếu có
         if (savedInstanceState != null) {

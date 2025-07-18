@@ -23,6 +23,8 @@ class MainViewModel:ViewModel() {
     private val paymentRepository = PaymentRepository()
     private val ordersRepository = OrdersRepository()
     private val voucherRepo = VoucherRepository()
+    private val _orderDetailsLiveData = MutableLiveData<OrderDetails?>()
+    val orderDetailsLiveData: LiveData<OrderDetails?> get() = _orderDetailsLiveData
 
     fun loadBanner(): LiveData<MutableList<BannerModel>> {
         return repository.loadBanner()
@@ -99,5 +101,30 @@ class MainViewModel:ViewModel() {
         val repo = OrdersRepository()
         repo.hasUnfinishedOrders(callback)
     }
+
+    private val _allVouchers = MutableLiveData<List<VouchersModel>>()
+    val allVouchers: LiveData<List<VouchersModel>> get() = _allVouchers
+
+    fun fetchAllActiveVouchers() {
+        voucherRepo.getAllActiveVouchers { list ->
+            _allVouchers.postValue(list)
+        }
+    }
+
+    fun fetchOrderById(orderId: String) {
+        ordersRepository.fetchOrder(orderId) { order ->
+            _orderDetailsLiveData.postValue(order)
+        }
+    }
+
+
+    fun listenToDeliveryStatus(customerId: String, itemKey: String): LiveData<String> {
+        val statusLiveData = MutableLiveData<String>()
+        ordersRepository.listenToDeliveryStatus(customerId, itemKey) { status ->
+            statusLiveData.postValue(status)
+        }
+        return statusLiveData
+    }
+
 
 }

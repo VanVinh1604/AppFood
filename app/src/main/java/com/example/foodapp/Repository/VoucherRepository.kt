@@ -48,4 +48,23 @@ class VoucherRepository {
         usageRef.setValue(true)
     }
 
+    fun getAllActiveVouchers(onResult: (List<VouchersModel>) -> Unit) {
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<VouchersModel>()
+                for (child in snapshot.children) {
+                    val voucher = child.getValue(VouchersModel::class.java)
+                    if (voucher != null && voucher.active) {
+                        list.add(voucher)
+                    }
+                }
+                onResult(list)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                onResult(emptyList()) // hoặc thông báo lỗi
+            }
+        })
+    }
+
 }

@@ -5,11 +5,13 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodapp.Adapter.OrderDetailsAdapter
 import com.example.foodapp.Domain.OrderDetails
 import com.example.foodapp.R
+import com.example.foodapp.ViewModel.MainViewModel
 //import com.example.foodapp.Adapter.OrderDrinkAdapter
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
@@ -19,26 +21,67 @@ class OrderDetailsActivity :AppCompatActivity() {
 
     private lateinit var stepCircles: List<TextView>
     private var order: OrderDetails? = null
+    private var deliveredDialogShown = false
+    private lateinit var viewModel: MainViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order_details)
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        Log.d("OrderDetailsActivity", "onCreate called")
 
         order = intent.getSerializableExtra("order") as? OrderDetails
-        if (order == null) {
-            Log.e("OrderDetails", "Order is null")
-            return
+        val orderIdFromFCM = intent.getStringExtra("orderId")
+        val orderObj = intent.getSerializableExtra("order")
+        Log.d("OrderDetailsActivity", "Received orderId from FCM: $orderIdFromFCM")
+        Log.d("OrderDetailsActivity", "Received order object from intent: $orderObj")
+
+        viewModel.orderDetailsLiveData.observe(this) { fetchedOrder ->
+            Log.d("OrderDetailsActivity", "LiveData emit: $fetchedOrder")
+            if (fetchedOrder != null) {
+                order = fetchedOrder
+                setupUI()
+                observeDeliveryStatus()
+            } else {
+                Log.e("OrderDetails", "Order not found")
+                finish()
+            }
+        }
+        if (order == null && !orderIdFromFCM.isNullOrEmpty()) {
+            viewModel.fetchOrderById(orderIdFromFCM)
+        } else if (order != null) {
+            setupUI()
+        } else {
+            Log.e("OrderDetails", "Không có order hoặc orderId")
+            finish()
         }
 
-        initStepCircles()
-        bindOrderData()
-        listenToDeliveryStatusUpdates()
-        setupDrinkList()
+
 
         findViewById<ImageView>(R.id.buttonBack).setOnClickListener {
             finish()
         }
     }
+
+    private fun observeDeliveryStatus() {
+        val customerId = order?.customerId ?: return
+        val itemKey = order?.itemPushKey ?: return
+
+        viewModel.listenToDeliveryStatus(customerId, itemKey)
+            .observe(this) { status ->
+                Log.d("OrderStatus", "deliveryStatus: $status")
+                updateOrderStepUI(status)
+            }
+    }
+
+    private fun setupUI() {
+        initStepCircles()
+        bindOrderData()
+        observeDeliveryStatus()
+        setupDrinkList()
+    }
+
     private fun setupDrinkList() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerDrinkItems)
 
@@ -92,27 +135,6 @@ class OrderDetailsActivity :AppCompatActivity() {
         }
     }
 
-    private fun listenToDeliveryStatusUpdates() {
-        val customerId = order?.customerId ?: return
-        val itemKey = order?.itemPushKey ?: return
-
-        val ref = FirebaseDatabase.getInstance()
-            .getReference("Orders")
-            .child(customerId)
-            .child(itemKey)
-
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val status = snapshot.child("deliveryStatus").getValue(String::class.java)
-                Log.d("OrderStatus", "deliveryStatus: $status")
-                updateOrderStepUI(status)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("OrderStatus", "Database error: ${error.message}")
-            }
-        })
-    }
 
     private fun updateOrderStepUI(status: String?) {
         stepCircles.forEach { it.setBackgroundResource(R.drawable.circle_gray) }
@@ -130,6 +152,19 @@ class OrderDetailsActivity :AppCompatActivity() {
         }
         for (i in 0..stepIndex) {
             stepCircles[i].setBackgroundResource(R.drawable.circle_orange)
+        }
+
+        // Nếu đã giao và chưa hiện dialog lần nào ⇒ bật dialog
+        if (stepIndex == 3 && !deliveredDialogShown) {
+            deliveredDialogShown = true   // đặt cờ trước để tránh lặp
+            runOnUiThread {
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Delivered successfully")
+                    .setMessage("Thank you for your trust and support!")
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .setCancelable(false)
+                    .show()
+            }
         }
     }
 }

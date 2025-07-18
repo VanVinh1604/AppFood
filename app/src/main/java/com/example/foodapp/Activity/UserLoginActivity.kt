@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 class UserLoginActivity : AppCompatActivity() {
@@ -105,12 +106,15 @@ class UserLoginActivity : AppCompatActivity() {
             viewModel.loginUser(email, password) { success ->
                 if (success) {
                     saveLoginState()
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
+
+                    val userId = FirebaseAuth.getInstance().currentUser?.uid
+                    if (userId != null) {
+                        uploadFcmTokenToFirebase(userId)
+                    }
+
+                    startActivity(Intent(this, MainActivity::class.java))
                     finish()
                     Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -171,6 +175,7 @@ private fun setupGoogleSignInClick() {
                                     ref.child(user.uid).setValue(customer)
                                         .addOnSuccessListener {
                                             saveLoginState()
+                                            uploadFcmTokenToFirebase(user.uid)
                                             Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
                                             startActivity(Intent(this, MainActivity::class.java))
                                             finish()
@@ -189,6 +194,7 @@ private fun setupGoogleSignInClick() {
             }
         }
     }
+
     private fun saveLoginState() {
         val sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
@@ -196,5 +202,26 @@ private fun setupGoogleSignInClick() {
             apply()
         }
     }
+
+    private fun uploadFcmTokenToFirebase(userId: String) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                val tokenRef = FirebaseDatabase.getInstance()
+                    .getReference("Tokens")
+                    .child(userId)
+                tokenRef.setValue(token)
+                    .addOnSuccessListener {
+                        Log.d("FCM", "Token uploaded successfully for user: $userId")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("FCM", "Failed to upload token: ${e.message}")
+                    }
+            } else {
+                Log.e("FCM", "Failed to get FCM token")
+            }
+        }
+    }
+
 
 }

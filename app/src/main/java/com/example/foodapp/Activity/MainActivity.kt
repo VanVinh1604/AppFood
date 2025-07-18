@@ -59,9 +59,8 @@ class MainActivity : AppCompatActivity() {
         initBottomMenu()
         initFirebaseMessaging()
         initSearchButton()
+        handleNotificationIntent(intent)
 
-
-        // initFirebaseMessaging() nếu bạn muốn dùng thông báo FCM sau này
     }
 
     // Khi user quay lại từ màn hình cấp quyền overlay
@@ -195,6 +194,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun handleNotificationIntent(intent: Intent?) {
+        intent?.extras?.let {
+            val orderId = it.getString("orderId")
+            if (!orderId.isNullOrEmpty()) {
+                val orderIntent = Intent(this, OrderDetailsActivity::class.java)
+                orderIntent.putExtra("orderId", orderId)
+                startActivity(orderIntent)
+            }
+        }
+    }
 
 }
 

@@ -66,4 +66,45 @@ class OrdersRepository {
             })
     }
 
+    fun fetchOrder(orderId: String, callback: (OrderDetails?) -> Unit) {
+        Log.d("ViewModel", "Fetching order with ID: $orderId")
+        val customerId = FirebaseAuth.getInstance().currentUser?.uid ?: return callback(null)
+
+        val ref = FirebaseDatabase.getInstance()
+            .getReference("Orders")
+            .child(customerId)
+            .child(orderId)
+
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val fetchedOrder = snapshot.getValue(OrderDetails::class.java)
+                fetchedOrder?.itemPushKey = orderId
+                callback(fetchedOrder)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                callback(null)
+            }
+        })
+    }
+    fun listenToDeliveryStatus(customerId: String, itemKey: String, callback: (String) -> Unit) {
+        val ref = FirebaseDatabase.getInstance()
+            .getReference("Orders")
+            .child(customerId)
+            .child(itemKey)
+            .child("deliveryStatus")
+
+        ref.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val status = snapshot.getValue(String::class.java) ?: ""
+                callback(status)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("OrderStatus", "listenToDeliveryStatus error: ${error.message}")
+            }
+        })
+    }
+
+
 }
