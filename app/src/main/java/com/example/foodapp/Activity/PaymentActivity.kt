@@ -3,6 +3,7 @@ package com.example.foodapp.Activity
 import PaymentViewModel
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -16,6 +17,7 @@ import com.example.project1762.Helper.MomoHelper
 import com.example.project1762.Helper.PaypalHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+
 import android.os.Handler
 import android.os.Looper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.foodapp.Adapter.VoucherAdapter
 import com.example.foodapp.Domain.VouchersModel
 import org.json.JSONObject
+import com.google.firebase.database.FirebaseDatabase
+
 
 
 class PaymentActivity : AppCompatActivity() {
@@ -320,6 +324,9 @@ class PaymentActivity : AppCompatActivity() {
             return
         }
 
+        // Lấy drinkIds từ intent
+        val drinkIds = intent.getStringArrayListExtra("drinkIds") ?: arrayListOf()
+
         val order = OrderDetails(
             customerId = uid,
             customerName = name,
@@ -516,6 +523,58 @@ class PaymentActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, error ?: "Mã giảm giá không hợp lệ", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+    private fun markOrderRatedFalse(order: OrderDetails) {
+        val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val names = order.drinkNames ?: return
+        val images = order.drinkImages
+        val prices = order.drinkPrices
+        val quantities = order.drinkQuantities
+        val sizes = order.drinkSizes
+
+
+        // Lấy drinkIds từ Cart
+        val managementCart = ManagmentCart(this)
+        val cartItems = managementCart.getListCart()
+        val drinkIds = cartItems.map { it.drinkId }
+
+        orderRef.child(userId).get().addOnSuccessListener { snapshot ->
+            val lastOrderKey = snapshot.children.lastOrNull()?.key
+            if (lastOrderKey != null) {
+                val orderNode = orderRef.child(userId).child(lastOrderKey)
+
+                // Lưu orderTime vào order
+                orderNode.child("orderTime").setValue(System.currentTimeMillis())
+
+                // Lưu status là Delivered
+                orderNode.child("status").setValue("Delivered")
+
+                // Lưu từng item
+                for (i in names.indices) {
+                    val itemData = mapOf(
+                        "drinkId" to drinkIds.getOrNull(i),
+                        "drinkName" to names[i],
+                        "drinkImage" to images?.getOrNull(i),
+                        "drinkPrice" to prices?.getOrNull(i)?.toDoubleOrNull(),
+                        "drinkQuantity" to quantities?.getOrNull(i),
+                        "drinkSize" to sizes?.getOrNull(i),
+                        "isReviewed" to false
+                    )
+
+                    orderNode.child("items").child("item_$i").setValue(itemData)
+                        .addOnSuccessListener {
+                            Log.d("PaymentActivity", "Item $i saved successfully")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("PaymentActivity", "Failed to save item $i: ${e.message}")
+                        }
+                }
+            }
+        }.addOnFailureListener { e ->
+            Log.e("PaymentActivity", "Không thể đọc Orders: ${e.message}")
         }
     }
 }

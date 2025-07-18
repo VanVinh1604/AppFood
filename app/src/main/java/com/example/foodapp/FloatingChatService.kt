@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
+import com.example.foodapp.Activity.MainActivity
 
 class FloatingChatService : Service() {
 
@@ -21,6 +22,7 @@ class FloatingChatService : Service() {
     private var initialY = 0
     private var initialTouchX = 0f
     private var initialTouchY = 0f
+
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -79,18 +81,40 @@ class FloatingChatService : Service() {
     }
 
     private fun openMessengerChat() {
-        val pageId = "598649500006063" // 👈 Thay bằng ID trang Facebook của bạn
-        val messengerIntent = Intent(Intent.ACTION_VIEW)
+        val sharedPref = getSharedPreferences("BubbleState", MODE_PRIVATE)
+        val openedMessenger = sharedPref.getBoolean("openedMessenger", false)
 
-        try {
-            messengerIntent.data = Uri.parse("fb-messenger://user/$pageId")
-            messengerIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(messengerIntent)
-        } catch (e: Exception) {
-            messengerIntent.data = Uri.parse("https://m.me/$pageId")
-            messengerIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(messengerIntent)
+        if (!openedMessenger) {
+            // 👈 Lần đầu nhấn: Mở Messenger
+            val pageId = "598649500006063"
+            val messengerIntent = Intent(Intent.ACTION_VIEW)
+
+            try {
+                messengerIntent.data = Uri.parse("fb-messenger://user/$pageId")
+                messengerIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(messengerIntent)
+            } catch (e: Exception) {
+                messengerIntent.data = Uri.parse("https://m.me/$pageId")
+                messengerIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(messengerIntent)
+            }
+
+            sharedPref.edit().putBoolean("openedMessenger", true).apply()
+
+        } else {
+            // 👈 Click lần 2: Trở lại app
+            val returnIntent = Intent(this, MainActivity::class.java)
+            returnIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(returnIntent)
+
+            sharedPref.edit().putBoolean("openedMessenger", false).apply()
         }
+    }
+
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopSelf() // Dừng service nếu app bị loại khỏi recent apps
     }
 
     override fun onDestroy() {

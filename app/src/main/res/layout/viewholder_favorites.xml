@@ -12,7 +12,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:padding="12dp"
+        android:paddingTop="20dp"> <!-- 👈 Thêm dòng này -->
 
         <ImageView
             android:id="@+id/imgDrink"
@@ -42,7 +43,6 @@
             app:layout_constraintHorizontal_bias="0.5" />
 
         <!-- TÊN SP -->
-
         <TextView
             android:id="@+id/tvDrinkName"
             android:layout_width="0dp"
@@ -56,7 +56,6 @@
             app:layout_constraintTop_toTopOf="@id/imgDrink"
             app:layout_constraintEnd_toStartOf="@id/btnRemoveFavorite"
             app:layout_constraintHorizontal_bias="0" />
-
 
         <!-- GIÁ + ĐÁNH GIÁ -->
         <LinearLayout
@@ -89,7 +88,6 @@
         </LinearLayout>
 
         <!-- NÚT XÓA -->
-
         <ImageView
             android:id="@+id/btnRemoveFavorite"
             android:layout_width="48dp"

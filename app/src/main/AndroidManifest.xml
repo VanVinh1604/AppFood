@@ -21,6 +21,12 @@
             android:exported="false" />
         <!-- Activity từ nhánh main -->
         <activity
+            android:name=".Activity.ReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ChangePasswordActivity"
+            android:exported="false" /> <!-- Activity từ nhánh main -->
+        <activity
             android:name=".Activity.OrderDetailsActivity"
             android:exported="false" />
         <activity
@@ -31,10 +37,9 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:configChanges="orientation|screenSize|keyboardHidden">
-
-            <!-- PayPal SUCCESS -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
@@ -46,6 +51,7 @@
             <!-- PayPal CANCEL -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
@@ -53,7 +59,6 @@
                     android:path="/cancel"
                     android:scheme="myapp" />
             </intent-filter>
-
             <!-- Momo SUCCESS -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

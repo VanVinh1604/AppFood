@@ -120,6 +120,8 @@ class CartActivity : AppCompatActivity() {
                         val drinkPrices = mutableListOf<String>()
                         val drinkQuantities = mutableListOf<Int>()
                         val drinkSizesList = mutableListOf<String>()
+                        val drinkIds = ArrayList<String>() // Thêm list drinkIds
+
 
                         for (item in items) {
                             total += (item.drinkPrice ?: 0.0) * item.numberInCart
@@ -128,6 +130,8 @@ class CartActivity : AppCompatActivity() {
                             drinkPrices.add((item.drinkPrice ?: 0.0).toString())
                             drinkQuantities.add(item.numberInCart)
                             drinkSizesList.add(item.size ?: "M")
+                            drinkIds.add(item.drinkId ?: "")
+
                         }
 
                         val intent = Intent(this@CartActivity, PaymentActivity::class.java)
@@ -137,6 +141,7 @@ class CartActivity : AppCompatActivity() {
                         intent.putStringArrayListExtra("drinkPrices", ArrayList(drinkPrices))
                         intent.putIntegerArrayListExtra("drinkQuantities", ArrayList(drinkQuantities))
                         intent.putStringArrayListExtra("drinkSizes", ArrayList(drinkSizesList))
+                        intent.putStringArrayListExtra("drinkIds", drinkIds) // Truyền drinkIds
 
                         startActivity(intent)
                     }

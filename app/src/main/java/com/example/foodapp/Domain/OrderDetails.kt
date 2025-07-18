@@ -19,6 +19,8 @@ data class OrderDetails(
     var paymentStatus: String? = null,
     var deliveryStatus: String? = null,
     var itemPushKey: String? = null,
+    val drinkIds: ArrayList<String>? = null, // Thêm field này
+
 
     var currentTime: Long = 0,
 
