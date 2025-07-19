@@ -29,6 +29,8 @@ import com.example.foodapp.ViewModel.MainViewModel
 import com.example.foodapp.databinding.ActivityMainBinding
 import com.example.foodapp.utils.dp
 import com.example.foodapp.FloatingChatService
+import com.example.foodapp.ViewModel.NotificationViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 
 
@@ -38,6 +40,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var popularAdapter: PopularAdapter
 //    private var categoryList = listOf<CategoryModel>()  // Lưu data để search
     private var popularList = listOf<ItemsModel>()    // Lưu data để search
+  //  private lateinit var notificationViewModel: NotificationViewModel
+
 
     override fun onBackPressed() {
         stopService(Intent(this, FloatingChatService::class.java))
@@ -51,6 +55,10 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+//        notificationViewModel = ViewModelProvider(this)[NotificationViewModel::class.java]
+//        observeNotifications()
+//        fetchNotificationsIfNeeded()
 
         // Kiểm tra quyền overlay để hiển thị icon chat nổi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
@@ -172,6 +180,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleNotificationIntent(intent)
+    }
+
 
     private fun initFirebaseMessaging() {
         // Tạo NotificationChannel cho Android 8+
@@ -211,6 +224,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+//    private fun observeNotifications() {
+//        notificationViewModel.notifications.observe(this) { notiList ->
+//            // TODO: Gợi ý: Hiển thị UI nếu muốn, hoặc ghi log debug
+//            for (noti in notiList) {
+//                Log.d("NotiSync", "Có thông báo: ${noti.title} - ${noti.body}")
+//            }
+//        }
+//
+//        notificationViewModel.error.observe(this) {
+//            Log.e("NotiSync", "Lỗi tải thông báo: $it")
+//        }
+//    }
+//
+//    private fun fetchNotificationsIfNeeded() {
+//        val userId = FirebaseAuth.getInstance().uid ?: return
+//        notificationViewModel.fetchNotifications(userId)
+//    }
+
 
 }
 

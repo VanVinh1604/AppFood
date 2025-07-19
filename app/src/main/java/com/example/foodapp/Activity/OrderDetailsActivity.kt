@@ -32,7 +32,17 @@ class OrderDetailsActivity :AppCompatActivity() {
         Log.d("OrderDetailsActivity", "onCreate called")
 
         order = intent.getSerializableExtra("order") as? OrderDetails
-        val orderIdFromFCM = intent.getStringExtra("orderId")
+        var orderIdFromFCM = intent.getStringExtra("orderId")
+
+// Nếu vẫn null, thử lấy từ extras khi app bị kill mở lại
+        if (orderIdFromFCM == null) {
+            val extras = intent.extras
+            if (extras != null) {
+                orderIdFromFCM = extras.getString("itemPushKey")
+                Log.d("OrderDetailsActivity", "Fallback lấy từ extras: $orderIdFromFCM")
+            }
+        }
+
         val orderObj = intent.getSerializableExtra("order")
         Log.d("OrderDetailsActivity", "Received orderId from FCM: $orderIdFromFCM")
         Log.d("OrderDetailsActivity", "Received order object from intent: $orderObj")

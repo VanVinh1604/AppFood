@@ -2,15 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
-
-
 }
 
 
 android {
     signingConfigs {
         create("my_config") {
-            storeFile = file("D:\\test_keystore\\test_keystore.jks")
+            storeFile = file("F:\\Android\\test_keystore.jks")
             storePassword = "16042004"
             keyAlias = "buivanvinh"
             keyPassword = "16042004"

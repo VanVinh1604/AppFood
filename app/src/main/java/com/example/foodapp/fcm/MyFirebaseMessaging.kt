@@ -36,29 +36,28 @@ class MyFirebaseMessaging : FirebaseMessagingService() {
 
         val strTitle = notification.title
         val strMessage = notification.body
-        val orderId = message.data["orderId"]
+        val orderId = message.data["itemPushKey"]
         Log.d("FCM", "✅ Notification Title: $strTitle")
         Log.d("FCM", "✅ Notification Message: $strMessage")
         Log.d("FCM", "📦 orderId in data payload: $orderId")
+        Log.d("FCM", "📦 Full Data Payload: ${message.data}")
+
 
         sendNotification(strTitle, strMessage, orderId)
     }
 
     private fun sendNotification(strTitle: String?, strMessage: String?, orderId: String?) {
         Log.d("FCM", "🚀 Preparing to send notification with orderId = $orderId")
-        val detailIntent = Intent(this, OrderDetailsActivity::class.java).apply {
+
+        val mainIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("orderId", orderId)
         }
 
-        val stackBuilder = TaskStackBuilder.create(this).apply {
-            // Add MainActivity as parent
-            addNextIntentWithParentStack(Intent(this@MyFirebaseMessaging, MainActivity::class.java))
-            // Then add the OrderDetailsActivity on top
-            addNextIntent(detailIntent)
-        }
-
-        val pendingIntent = stackBuilder.getPendingIntent(
+        val pendingIntent = PendingIntent.getActivity(
+            this,
             0,
+            mainIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
