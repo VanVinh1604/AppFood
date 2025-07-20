@@ -3,6 +3,7 @@ package com.example.foodapp.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -128,21 +129,18 @@ class DetailActivity : AppCompatActivity() {
                 smallBtn.setBackgroundResource(R.drawable.stroke_brown_bg)
                 mediumBtn.setBackgroundResource(0)
                 largeBtn.setBackgroundResource(0)
-                updatePriceBySize()
             }
             mediumBtn.setOnClickListener {
                 selectedSize = "Medium"
                 smallBtn.setBackgroundResource(0)
                 mediumBtn.setBackgroundResource(R.drawable.stroke_brown_bg)
                 largeBtn.setBackgroundResource(0)
-                updatePriceBySize()
             }
             largeBtn.setOnClickListener {
                 selectedSize = "Large"
                 smallBtn.setBackgroundResource(0)
                 mediumBtn.setBackgroundResource(0)
                 largeBtn.setBackgroundResource(R.drawable.stroke_brown_bg)
-                updatePriceBySize()
             }
         }
     }
@@ -163,17 +161,9 @@ class DetailActivity : AppCompatActivity() {
 
             addToCartBtn.setOnClickListener {
                 val number = numberItemTxt.text.toString().toIntOrNull() ?: 1
-                val basePrice = item.drinkPrice ?: 0.0
-                val finalPrice = when (selectedSize) {
-                    "Medium" -> basePrice * 1.1
-                    "Large" -> basePrice * 1.2
-                    else -> basePrice
-                }
-
                 val itemToCart = item.copy(
                     numberInCart = number,
-                    size = selectedSize,
-                    drinkPrice = finalPrice
+                    size = selectedSize
                 )
                 managmentCart.insertItemToCart(itemToCart)
             }
@@ -281,6 +271,7 @@ class DetailActivity : AppCompatActivity() {
             }
 
             val averageRating = if (count > 0) totalStars / count else 0f
+            Log.d("DetailActivity", "Calculated average rating: $averageRating, Count: $count") // Kiểm tra giá trị
 
             val itemRef = FirebaseDatabase.getInstance().getReference("Items").child(drinkId)
             itemRef.child("rating").setValue(averageRating)
@@ -288,7 +279,8 @@ class DetailActivity : AppCompatActivity() {
                     itemRef.child("rating").get()
                         .addOnSuccessListener { ratingSnapshot ->
                             val latestRating = ratingSnapshot.getValue(Float::class.java) ?: 0f
-                            binding.ratingTxt.text = String.format("%.1f", latestRating)
+                            Log.d("DetailActivity", "Updated rating in Firebase: $latestRating")
+                            binding.ratingTxt.text = String.format("%.1f", latestRating) // Hiển thị 1 chữ số thập phân
                         }
                 }
                 .addOnFailureListener {
@@ -313,20 +305,12 @@ class DetailActivity : AppCompatActivity() {
         itemRef.child("rating").get()
             .addOnSuccessListener { snapshot ->
                 val rating = snapshot.getValue(Float::class.java) ?: 0f
-                binding.ratingTxt.text = String.format("%.1f", rating)
+                Log.d("DetailActivity", "Raw rating from Firebase: $rating") // Kiểm tra giá trị thô
+                binding.ratingTxt.text = String.format("%.1f", rating) // Giữ 1 chữ số thập phân
             }
             .addOnFailureListener {
+                Log.e("DetailActivity", "Failed to load rating: ${it.message}")
                 binding.ratingTxt.text = "N/A"
             }
     }
-    private fun updatePriceBySize() {
-        val basePrice = item.drinkPrice ?: 0.0
-        val finalPrice = when (selectedSize) {
-            "Medium" -> basePrice * 1.1
-            "Large" -> basePrice * 1.2
-            else -> basePrice
-        }
-        binding.priceTxt.text = "$${String.format("%.2f", finalPrice)}"
-    }
-
 }
