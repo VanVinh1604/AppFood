@@ -47,7 +47,7 @@
             android:id="@+id/emptyText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Danh sách yêu thích trống"
+            android:text="Favorites list is empty"
             android:textColor="@color/darkBrown"
             android:gravity="center"
             android:visibility="gone"

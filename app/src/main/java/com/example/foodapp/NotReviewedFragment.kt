@@ -61,7 +61,7 @@ class NotReviewedFragment : Fragment() {
                     updateTrackingMap(position)
 
                     updateEmptyState()
-                    Toast.makeText(context, "Đánh giá thành công!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Review successful!", Toast.LENGTH_SHORT).show()
                 }
             }
         })
@@ -208,7 +208,7 @@ class NotReviewedFragment : Fragment() {
         if (reviewList.isEmpty()) {
             recyclerView.visibility = View.GONE
             emptyView.visibility = View.VISIBLE
-            emptyView.text = "Không có sản phẩm nào cần đánh giá"
+            emptyView.text = "There are no products to review"
         } else {
             recyclerView.visibility = View.VISIBLE
             emptyView.visibility = View.GONE

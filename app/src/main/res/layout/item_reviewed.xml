@@ -13,20 +13,20 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Phần hiển thị thông tin sản phẩm -->
+        <!-- Product information section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Ảnh sản phẩm -->
+            <!-- Product image -->
             <ImageView
                 android:id="@+id/drinkImage"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:scaleType="centerCrop" />
 
-            <!-- Thông tin sản phẩm -->
+            <!-- Product details -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                     android:id="@+id/drinkName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tên sản phẩm"
+                    android:text="Product Name"
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
@@ -54,7 +54,7 @@
                     android:id="@+id/drinkPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="50.000₫"
+                    android:text="25.0đ"
                     android:textColor="@android:color/holo_red_dark"
                     android:textStyle="bold"
                     android:layout_marginTop="2dp" />
@@ -63,7 +63,7 @@
                     android:id="@+id/reviewDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Đã đánh giá: 01/01/2024"
+                    android:text="Reviewed: 01/01/2024"
                     android:textSize="12sp"
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginTop="4dp" />
@@ -77,11 +77,11 @@
             android:background="#E0E0E0"
             android:layout_marginVertical="12dp" />
 
-        <!-- Phần review của user -->
+        <!-- User's review section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đánh giá của bạn:"
+            android:text="Your review:"
             android:textStyle="bold"
             android:textSize="14sp" />
 
@@ -99,11 +99,10 @@
             android:id="@+id/userComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nội dung đánh giá"
+            android:text="Review content"
             android:layout_marginTop="8dp"
             android:textSize="14sp"
             android:background="@android:drawable/edit_text"
             android:padding="8dp" />
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -9,7 +9,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 class ReviewActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityReviewBinding
-    private val tabTitles = arrayOf("Chưa đánh giá", "Đã đánh giá")
+    private val tabTitles = arrayOf("Not yet reviewed", "Reviewed")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
