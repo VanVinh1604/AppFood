@@ -1,6 +1,5 @@
 package com.example.foodapp.fcm
 
-
 import android.R.id.message
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -41,7 +40,6 @@ class MyFirebaseMessaging : FirebaseMessagingService() {
         Log.d("FCM", "✅ Notification Message: $strMessage")
         Log.d("FCM", "📦 orderId in data payload: $orderId")
         Log.d("FCM", "📦 Full Data Payload: ${message.data}")
-
 
         sendNotification(strTitle, strMessage, orderId)
     }

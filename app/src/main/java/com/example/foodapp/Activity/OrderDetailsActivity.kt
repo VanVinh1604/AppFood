@@ -1,5 +1,6 @@
 package com.example.foodapp.Activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
@@ -166,15 +167,29 @@ class OrderDetailsActivity :AppCompatActivity() {
 
         // Nếu đã giao và chưa hiện dialog lần nào ⇒ bật dialog
         if (stepIndex == 3 && !deliveredDialogShown) {
-            deliveredDialogShown = true   // đặt cờ trước để tránh lặp
+            deliveredDialogShown = true
+
             runOnUiThread {
                 androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Delivered successfully")
-                    .setMessage("Thank you for your trust and support!")
-                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .setTitle("Đơn hàng đã giao thành công 🎉")
+                    .setMessage("Bạn có muốn đánh giá sản phẩm không?")
+                    .setPositiveButton("Đánh giá ngay") { dialog, _ ->
+                        dialog.dismiss()
+                        navigateToReview()
+                    }
+                    .setNegativeButton("Để sau") { dialog, _ ->
+                        dialog.dismiss()
+                    }
                     .setCancelable(false)
                     .show()
             }
         }
+
     }
+    private fun navigateToReview() {
+        val intent = Intent(this, ReviewActivity::class.java)
+        startActivity(intent)
+    }
+
+
 }

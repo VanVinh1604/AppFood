@@ -19,6 +19,4 @@
         var rating: Float?= null,
         var endAt: String? = null,
 
-
-
         ):Serializable

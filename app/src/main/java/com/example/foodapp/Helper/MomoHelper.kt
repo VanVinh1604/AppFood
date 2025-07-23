@@ -32,6 +32,7 @@ object MomoHelper {
         voucherCode: String?,           // ✅ thêm
         discountAmount: Double?,
         drinkNames: ArrayList<String>,
+        drinkIds: ArrayList<String>,    // ✅ thêm param drinkIds
         drinkImages: ArrayList<String>,
         drinkPrices: ArrayList<String>,
         drinkQuantities: ArrayList<Int>,
@@ -50,7 +51,7 @@ object MomoHelper {
             put("totalPrice", amount)
             put("voucherCode", voucherCode ?: "")
             put("discountAmount", discountAmount ?: 0.0)
-
+            put("drinkIds", JSONArray(drinkIds))
             put("drinkNames", JSONArray(drinkNames))
             put("drinkImages", JSONArray(drinkImages))
             put("drinkPrices", JSONArray(drinkPrices))

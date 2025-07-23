@@ -51,6 +51,8 @@ class PaymentActivity : AppCompatActivity() {
     private var drinkPrices: ArrayList<String> = arrayListOf()
     private var drinkQuantities: ArrayList<Int> = arrayListOf()
     private var drinkSizes: ArrayList<String> = arrayListOf()
+    private var drinkIds: ArrayList<String> = arrayListOf()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,6 +90,7 @@ class PaymentActivity : AppCompatActivity() {
         initVoucherApply()
         observePaymentData()
 
+        drinkIds = intent.getStringArrayListExtra("drinkIds") ?: arrayListOf()
         drinkNames = intent.getStringArrayListExtra("drinkNames") ?: arrayListOf()
         drinkImages = intent.getStringArrayListExtra("drinkImages") ?: arrayListOf()
         drinkPrices = intent.getStringArrayListExtra("drinkPrices") ?: arrayListOf()
@@ -162,6 +165,7 @@ class PaymentActivity : AppCompatActivity() {
         outState.putString("savedAddress", savedAddress)
         outState.putString("savedPhone", savedPhone)
         outState.putString("savedNote", savedNote)
+        outState.putStringArrayList("drinkIds", drinkIds)
         outState.putString("appliedVoucherCode", appliedVoucherCode)
         outState.putDouble("discountAmount", discountAmount)
         outState.putString("finalTotalPrice", finalTotalPrice)
@@ -180,6 +184,7 @@ class PaymentActivity : AppCompatActivity() {
         savedAddress = savedInstanceState.getString("savedAddress", "")
         savedPhone = savedInstanceState.getString("savedPhone", "")
         savedNote = savedInstanceState.getString("savedNote", "")
+        drinkIds = savedInstanceState.getStringArrayList("drinkIds") ?: arrayListOf()
         appliedVoucherCode = savedInstanceState.getString("appliedVoucherCode")
         discountAmount = savedInstanceState.getDouble("discountAmount", 0.0)
         finalTotalPrice = savedInstanceState.getString("finalTotalPrice")
@@ -247,6 +252,13 @@ class PaymentActivity : AppCompatActivity() {
                                         val decodedBytes = android.util.Base64.decode(it, android.util.Base64.NO_WRAP)
                                         val json = JSONObject(String(decodedBytes))
 
+                                        json.optJSONArray("drinkIds")?.let { arr ->
+                                            drinkIds.clear()
+                                            for (i in 0 until arr.length()) {
+                                                drinkIds.add(arr.optString(i))
+                                            }
+                                        }
+
                                         savedName = json.optString("name", savedName)
                                         savedPhone = json.optString("phone", savedPhone)
                                         savedAddress = json.optString("address", savedAddress)
@@ -268,6 +280,7 @@ class PaymentActivity : AppCompatActivity() {
                                         drinkPrices.clear()
                                         drinkQuantities.clear()
                                         drinkSizes.clear()
+
 
                                         for (i in 0 until (drinkNamesArray?.length() ?: 0)) {
                                             drinkNames.add(drinkNamesArray?.optString(i) ?: "")
@@ -325,7 +338,9 @@ class PaymentActivity : AppCompatActivity() {
         }
 
         // Lấy drinkIds từ intent
-        val drinkIds = intent.getStringArrayListExtra("drinkIds") ?: arrayListOf()
+        // Dùng biến đã lưu ở trên
+        val drinkIdsToSave = drinkIds
+
 
         val order = OrderDetails(
             customerId = uid,
@@ -333,6 +348,7 @@ class PaymentActivity : AppCompatActivity() {
             address = address,
             phoneNumber = phone,
             note = note,
+            drinkIds = drinkIdsToSave,
             totalPrice = finalTotalPrice,
             drinkNames = drinkNames,
             drinkImages = drinkImages,
@@ -431,6 +447,7 @@ class PaymentActivity : AppCompatActivity() {
             customerNote = savedNote.ifEmpty { binding.noteInput.text.toString() },
             voucherCode = appliedVoucherCode,                    // ✅ truyền đúng
             discountAmount = discountAmount,
+            drinkIds = drinkIds,
             drinkNames = drinkNames,
             drinkImages = drinkImages,
             drinkPrices = drinkPrices,

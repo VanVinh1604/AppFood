@@ -217,6 +217,7 @@ class MainActivity : AppCompatActivity() {
     private fun handleNotificationIntent(intent: Intent?) {
         intent?.extras?.let {
             val orderId = it.getString("orderId")
+            Log.d("ThongBao","Gui thong bao tu fcm:${orderId}")
             if (!orderId.isNullOrEmpty()) {
                 val orderIntent = Intent(this, OrderDetailsActivity::class.java)
                 orderIntent.putExtra("orderId", orderId)
