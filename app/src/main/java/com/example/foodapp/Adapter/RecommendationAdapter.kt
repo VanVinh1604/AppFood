@@ -16,7 +16,6 @@ class RecommendationAdapter(
     private var recommendationList: List<ItemsModel>
 ) : RecyclerView.Adapter<RecommendationAdapter.ViewHolder>() {
 
-    // ViewHolder sử dụng ViewBinding
     inner class ViewHolder(val binding: ItemRecommendationBinding) :
         RecyclerView.ViewHolder(binding.root)
 
@@ -31,7 +30,7 @@ class RecommendationAdapter(
         val item = recommendationList[position]
         with(holder.binding) {
             // Hiển thị tên và giá sản phẩm
-            //recommendationName.text = item.drinkName?.trim() ?: "Không có tên"
+            recommendationTitle.text = item.drinkName?.trim() ?: "Không có tên" // Sửa ID thành recommendationTitle
             recommendationPrice.text = "$${item.drinkPrice ?: 0}"
 
             // Load ảnh sản phẩm bằng Glide
@@ -52,7 +51,6 @@ class RecommendationAdapter(
 
     override fun getItemCount(): Int = recommendationList.size
 
-    // Hàm cập nhật dữ liệu từ Firebase
     fun setData(newList: List<ItemsModel>) {
         recommendationList = newList
         notifyDataSetChanged()

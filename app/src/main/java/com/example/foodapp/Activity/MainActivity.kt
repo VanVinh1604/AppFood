@@ -87,6 +87,18 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Bạn chưa cấp quyền hiển thị icon chat", Toast.LENGTH_SHORT).show()
         }
     }
+    override fun onStop() {
+        super.onStop()
+        stopService(Intent(this, FloatingChatService::class.java))
+    }
+
+    // 👉 BẬT lại service khi quay lại app
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
+            startService(Intent(this, FloatingChatService::class.java))
+        }
+    }
 
     private fun initSearchButton() {
         binding.searchBtn.setOnClickListener {

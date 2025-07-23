@@ -13,20 +13,20 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Phần hiển thị thông tin sản phẩm -->
+        <!-- Product information section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Ảnh sản phẩm -->
+            <!-- Product image -->
             <ImageView
                 android:id="@+id/drinkImage"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:scaleType="centerCrop" />
 
-            <!-- Thông tin sản phẩm -->
+            <!-- Product details -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                     android:id="@+id/drinkName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tên sản phẩm"
+                    android:text="Product Name"
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
@@ -53,7 +53,7 @@
                     android:id="@+id/drinkPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="50.000₫"
+                    android:text="25.0đ"
                     android:textColor="@android:color/holo_red_dark"
                     android:textStyle="bold"
                     android:layout_marginTop="2dp" />
@@ -67,11 +67,11 @@
             android:background="#E0E0E0"
             android:layout_marginVertical="12dp" />
 
-        <!-- Phần đánh giá -->
+        <!-- Review section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đánh giá sản phẩm:"
+            android:text="Rate this product:"
             android:textStyle="bold" />
 
         <RatingBar
@@ -83,12 +83,12 @@
             android:layout_marginTop="8dp"
             android:layout_gravity="center_horizontal" />
 
-        <!-- Nhập bình luận -->
+        <!-- Comment input -->
         <EditText
             android:id="@+id/commentInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Chia sẻ trải nghiệm của bạn..."
+            android:hint="Share your experience..."
             android:inputType="textMultiLine"
             android:minLines="3"
             android:gravity="top"
@@ -96,12 +96,12 @@
             android:padding="12dp"
             android:layout_marginTop="12dp" />
 
-        <!-- Nút Gửi -->
+        <!-- Submit button -->
         <Button
             android:id="@+id/sendBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Gửi đánh giá"
+            android:text="Submit a review"
             android:layout_marginTop="12dp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -3,8 +3,12 @@ package com.example.foodapp.Activity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.foodapp.R
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -14,7 +18,15 @@ class ChangePasswordActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_change_password)
+
+        // Apply padding to system bars
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         auth = FirebaseAuth.getInstance()
 
@@ -22,7 +34,16 @@ class ChangePasswordActivity : AppCompatActivity() {
         val newPassword = findViewById<EditText>(R.id.new_password)
         val confirmNewPassword = findViewById<EditText>(R.id.confirm_new_password)
         val changeButton = findViewById<Button>(R.id.btn_change_password)
+        val backButton = findViewById<ImageView>(R.id.back_button)
 
+        // Set up back button click listener
+        backButton.isClickable = true
+        backButton.isFocusable = true
+        backButton.setOnClickListener {
+            handleBackAction()
+        }
+
+        // Set up change password button click listener
         changeButton.setOnClickListener {
             val current = currentPassword.text.toString()
             val newPass = newPassword.text.toString()
@@ -53,5 +74,14 @@ class ChangePasswordActivity : AppCompatActivity() {
                     Toast.makeText(this, "Incorrect current password", Toast.LENGTH_SHORT).show()
                 }
         }
+    }
+
+    private fun handleBackAction() {
+        finish()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        handleBackAction()
     }
 }

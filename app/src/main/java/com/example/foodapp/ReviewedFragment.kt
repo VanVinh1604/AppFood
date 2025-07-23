@@ -226,7 +226,7 @@ class ReviewedFragment : Fragment() {
         if (reviewedList.isEmpty()) {
             recyclerView.visibility = View.GONE
             emptyView.visibility = View.VISIBLE
-            emptyView.text = "Bạn chưa đánh giá sản phẩm nào"
+            emptyView.text = "You have not rated any products yet"
         } else {
             recyclerView.visibility = View.VISIBLE
             emptyView.visibility = View.GONE
